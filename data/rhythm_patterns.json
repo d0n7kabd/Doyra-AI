@@ -1,0 +1,14 @@
+{
+  "patterns": [
+    ["dom", "bak", "rak", "rest", "dom", "rak", "bak", "rest"],
+    ["dom", "dom", "rak", "bak", "rest", "rak", "dom", "bak"],
+    ["rak", "bak", "dom", "rest", "rak", "dom", "bak", "rak"],
+    ["dom", "rak", "dom", "bak", "rest", "bak", "rak", "dom"],
+    ["bak", "rak", "rest", "dom", "bak", "dom", "rak", "rest"],
+    ["dom", "bak", "dom", "rak", "rest", "rak", "bak", "dom"],
+    ["rak", "rest", "dom", "bak", "rak", "dom", "rest", "bak"],
+    ["dom", "rak", "bak", "rak", "rest", "dom", "bak", "rest"],
+    ["bak", "dom", "rest", "rak", "bak", "dom", "rak", "rest"],
+    ["dom", "rest", "dom", "bak", "rak", "bak", "dom", "rak"]
+  ]
+}
