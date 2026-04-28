@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doyra AI Performance Stage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="hero">
+            <div id="stage" class="stage" aria-live="polite">
+                <div class="stage-backdrop"></div>
+                <div class="stage-aura"></div>
+                <div class="stage-topbar">
+                    <div class="stage-brand">
+                        <p class="eyebrow">Doyra AI</p>
+                        <h1>Performance Rig</h1>
+                    </div>
+                    <div class="stage-actions">
+                        <button id="playButton" class="primary-button" type="button">Play</button>
+                        <button id="stopButton" class="ghost-button" type="button">Stop</button>
+                    </div>
+                </div>
+                <div class="robot-wrap">
+                    <!-- Code-built robot performer with a doyra held in front of the upper body. -->
+                    <svg
+                        id="robotRig"
+                        class="robot-svg"
+                        viewBox="0 0 760 760"
+                        role="img"
+                        aria-label="Robot performer holding a doyra in front of the chest and stomach"
+                    >
+                        <defs>
+                            <linearGradient id="metalShell" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#f7fffd"></stop>
+                                <stop offset="40%" stop-color="#b8d6cb"></stop>
+                                <stop offset="100%" stop-color="#547167"></stop>
+                            </linearGradient>
+                            <linearGradient id="metalDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#17332c"></stop>
+                                <stop offset="100%" stop-color="#0b1714"></stop>
+                            </linearGradient>
+                            <linearGradient id="metalEdge" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#8ef0d8"></stop>
+                                <stop offset="100%" stop-color="#f0c27b"></stop>
+                            </linearGradient>
+                            <radialGradient id="doyraSkin" cx="50%" cy="44%" r="58%">
+                                <stop offset="0%" stop-color="#fff1c9"></stop>
+                                <stop offset="68%" stop-color="#ddb97f"></stop>
+                                <stop offset="100%" stop-color="#845a33"></stop>
+                            </radialGradient>
+                            <linearGradient id="doyraRim" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#7f5b31"></stop>
+                                <stop offset="50%" stop-color="#cb9f61"></stop>
+                                <stop offset="100%" stop-color="#6f4b28"></stop>
+                            </linearGradient>
+                        </defs>
+
+                        <ellipse class="stage-floor" cx="382" cy="644" rx="186" ry="34"></ellipse>
+
+                        <g id="robotFigure" class="robot-figure">
+                            <g class="back-leg">
+                                <rect x="300" y="510" width="72" height="132" rx="30" class="metal-dark"></rect>
+                                <rect x="312" y="624" width="90" height="24" rx="12" class="metal-panel"></rect>
+                            </g>
+                            <g class="front-leg">
+                                <rect x="388" y="506" width="78" height="138" rx="32" class="metal-dark"></rect>
+                                <rect x="380" y="624" width="102" height="26" rx="13" class="metal-panel"></rect>
+                            </g>
+
+                            <g id="torsoCore" class="torso-core">
+                                <path
+                                    d="M278 234 C302 206, 458 202, 488 234 L510 448 C512 482, 482 508, 448 510 L312 510 C278 508, 248 482, 250 448 Z"
+                                    class="metal-dark"
+                                ></path>
+                                <rect x="304" y="240" width="156" height="116" rx="42" class="metal-shell"></rect>
+                                <rect x="320" y="366" width="124" height="112" rx="34" class="metal-panel"></rect>
+                                <circle cx="342" cy="288" r="16" class="energy-core"></circle>
+                                <circle cx="420" cy="288" r="16" class="energy-core"></circle>
+                                <rect x="350" y="432" width="62" height="18" rx="9" class="accent-strip"></rect>
+                            </g>
+
+                            <g id="headUnit" class="head-unit">
+                                <rect x="326" y="126" width="112" height="92" rx="34" class="metal-shell"></rect>
+                                <rect x="350" y="214" width="64" height="22" rx="10" class="metal-panel"></rect>
+                                <rect x="348" y="158" width="68" height="18" rx="9" class="visor"></rect>
+                                <circle cx="362" cy="167" r="5" class="visor-glow"></circle>
+                                <circle cx="402" cy="167" r="5" class="visor-glow"></circle>
+                                <rect x="370" y="176" width="24" height="8" rx="4" class="visor-glow soft"></rect>
+                            </g>
+
+                            <g id="neckUnit">
+                                <rect x="360" y="214" width="44" height="34" rx="14" class="metal-panel"></rect>
+                            </g>
+
+                            <g id="strikingUpperArm" class="arm-part striking-upper-arm">
+                                <path d="M292 270 C274 286, 258 324, 254 356 L286 370 C294 338, 304 304, 324 282 Z" class="metal-shell"></path>
+                                <circle cx="292" cy="270" r="22" class="joint-shell"></circle>
+                                <circle cx="266" cy="356" r="18" class="joint-shell"></circle>
+                            </g>
+
+                            <g id="supportUpperArm" class="arm-part support-upper-arm">
+                                <path d="M468 276 C494 292, 518 324, 522 358 L490 370 C482 340, 470 308, 448 286 Z" class="metal-shell"></path>
+                                <circle cx="468" cy="276" r="22" class="joint-shell"></circle>
+                                <circle cx="510" cy="360" r="18" class="joint-shell"></circle>
+                            </g>
+
+                            <g id="doyraGroup" class="doyra-group">
+                                <ellipse cx="390" cy="396" rx="164" ry="186" transform="rotate(-8 390 396)" class="doyra-rim"></ellipse>
+                                <ellipse cx="390" cy="396" rx="144" ry="166" transform="rotate(-8 390 396)" class="doyra-skin"></ellipse>
+                                <ellipse cx="390" cy="396" rx="128" ry="150" transform="rotate(-8 390 396)" class="doyra-shine"></ellipse>
+                                <ellipse cx="390" cy="396" rx="100" ry="118" transform="rotate(-8 390 396)" class="doyra-center"></ellipse>
+                                <g class="doyra-jingles">
+                                    <circle cx="266" cy="312" r="10"></circle>
+                                    <circle cx="242" cy="356" r="10"></circle>
+                                    <circle cx="232" cy="408" r="10"></circle>
+                                    <circle cx="240" cy="460" r="10"></circle>
+                                    <circle cx="266" cy="506" r="10"></circle>
+                                    <circle cx="310" cy="544" r="10"></circle>
+                                    <circle cx="368" cy="566" r="10"></circle>
+                                    <circle cx="428" cy="562" r="10"></circle>
+                                    <circle cx="484" cy="538" r="10"></circle>
+                                    <circle cx="528" cy="498" r="10"></circle>
+                                    <circle cx="550" cy="446" r="10"></circle>
+                                    <circle cx="548" cy="390" r="10"></circle>
+                                    <circle cx="530" cy="336" r="10"></circle>
+                                    <circle cx="490" cy="290" r="10"></circle>
+                                    <circle cx="438" cy="258" r="10"></circle>
+                                    <circle cx="378" cy="244" r="10"></circle>
+                                </g>
+                            </g>
+
+                            <g id="supportForearm" class="arm-part support-forearm">
+                                <path d="M500 370 C522 386, 536 408, 538 438 L508 446 C504 420, 494 400, 474 384 Z" class="metal-shell"></path>
+                                <circle cx="532" cy="438" r="16" class="joint-shell"></circle>
+                            </g>
+                            <g id="supportHand" class="arm-part support-hand">
+                                <path d="M520 430 C542 428, 552 436, 554 452 C548 468, 536 472, 520 464 C510 452, 510 440, 520 430 Z" class="metal-shell"></path>
+                                <rect x="532" y="432" width="18" height="6" rx="3" class="finger-line"></rect>
+                                <rect x="536" y="442" width="18" height="6" rx="3" class="finger-line"></rect>
+                                <rect x="534" y="452" width="18" height="6" rx="3" class="finger-line"></rect>
+                            </g>
+
+                            <g id="strikingForearm" class="arm-part striking-forearm">
+                                <path d="M258 368 C284 360, 314 362, 334 376 L322 406 C300 390, 276 386, 250 394 Z" class="metal-shell"></path>
+                                <circle cx="332" cy="388" r="16" class="joint-shell"></circle>
+                            </g>
+                            <g id="strikingHand" class="arm-part striking-hand">
+                                <path d="M320 372 C344 362, 362 368, 366 388 C362 406, 346 416, 324 410 C312 396, 310 384, 320 372 Z" class="metal-shell"></path>
+                                <rect x="338" y="374" width="18" height="6" rx="3" class="finger-line"></rect>
+                                <rect x="344" y="384" width="18" height="6" rx="3" class="finger-line"></rect>
+                                <rect x="340" y="394" width="18" height="6" rx="3" class="finger-line"></rect>
+                            </g>
+                        </g>
+                    </svg>
+                    <div id="drumPulse" class="drum-pulse"></div>
+                    <div id="handTrail" class="hand-trail"></div>
+                </div>
+                <div class="stage-readout">
+                    <span class="status-label">Current stroke</span>
+                    <strong id="currentStroke">Idle</strong>
+                </div>
+                <div class="equalizer" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="stage-dock">
+                    <div class="dock-main">
+                        <label class="field compact-field">
+                            <span>Preset</span>
+                            <select id="presetSelect">
+                                <option value="samarkand-drive">Samarkand Drive</option>
+                                <option value="ceremonial-loop">Ceremonial Loop</option>
+                                <option value="night-caravan">Night Caravan</option>
+                                <option value="machine-zarb">Machine Zarb</option>
+                            </select>
+                        </label>
+
+                        <label class="field compact-field">
+                            <span>BPM</span>
+                            <div class="range-row">
+                                <input id="bpmSlider" type="range" min="70" max="150" value="108">
+                                <strong id="bpmValue">108</strong>
+                            </div>
+                        </label>
+                    </div>
+
+                    <label class="field dock-sequence">
+                        <span>Sequence</span>
+                        <textarea id="sequenceInput" rows="2" spellcheck="false">dom bak rak rest dom rak bak rest dom bak rak dom</textarea>
+                    </label>
+
+                    <div class="dock-footer">
+                        <div class="stroke-legend">
+                            <button class="stroke-pill" data-token="dom" type="button">DOM</button>
+                            <button class="stroke-pill" data-token="bak" type="button">BAK</button>
+                            <button class="stroke-pill" data-token="rak" type="button">RAK</button>
+                            <button class="stroke-pill" data-token="rest" type="button">REST</button>
+                        </div>
+                        <div class="metric-inline">
+                            <span>Length</span>
+                            <strong id="sequenceLength">0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="layout">
+            <section class="panel sequence-panel">
+                <div id="sequenceGrid" class="sequence-grid"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="./app.js"></script>
+</body>
+</html>

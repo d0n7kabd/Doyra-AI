@@ -9,11 +9,16 @@ It includes:
 - `train.py` to train a simple LSTM next-stroke model and save it as `model.pt`
 - `generate.py` to create a new rhythm pattern from the trained model and play it
 - `model_utils.py` for shared dataset and model code
+- `frontend/` for a cinematic browser frontend concept with a code-built SVG robot performer
 
 ## Project Structure
 
 ```text
 Doyra-AI/
+├── frontend/
+│   ├── app.js
+│   ├── index.html
+│   └── styles.css
 ├── data/
 │   └── rhythm_patterns.json
 ├── samples/
@@ -24,6 +29,16 @@ Doyra-AI/
 ├── requirements.txt
 └── train.py
 ```
+
+## Frontend Preview
+
+You can preview the frontend in either of these ways:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\open-frontend.ps1
+```
+
+Or open `frontend/index.html` directly in your browser.
 
 ## 1. Install Python Dependencies
 
