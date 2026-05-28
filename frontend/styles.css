@@ -634,7 +634,8 @@ input[type="range"] {
     --pulse-color: rgba(106, 225, 206, 0.82);
 }
 
-.stage[data-stroke="rak"] .drum-pulse {
+.stage[data-stroke="arabic"] .drum-pulse,
+.stage[data-stroke="phrase"] .drum-pulse {
     --pulse-color: rgba(242, 124, 155, 0.82);
 }
 
@@ -670,15 +671,18 @@ input[type="range"] {
     transform: rotate(32deg) translate(14px, 6px);
 }
 
-.stage[data-stroke="rak"].is-hit .striking-upper-arm {
+.stage[data-stroke="arabic"].is-hit .striking-upper-arm,
+.stage[data-stroke="phrase"].is-hit .striking-upper-arm {
     transform: rotate(-4deg) translate(4px, 2px);
 }
 
-.stage[data-stroke="rak"].is-hit .striking-forearm {
+.stage[data-stroke="arabic"].is-hit .striking-forearm,
+.stage[data-stroke="phrase"].is-hit .striking-forearm {
     transform: rotate(-18deg) translate(-4px, -10px);
 }
 
-.stage[data-stroke="rak"].is-hit .striking-hand {
+.stage[data-stroke="arabic"].is-hit .striking-hand,
+.stage[data-stroke="phrase"].is-hit .striking-hand {
     transform: rotate(-24deg) translate(-6px, -12px);
 }
 
@@ -690,19 +694,22 @@ input[type="range"] {
 
 .stage[data-stroke="dom"].is-hit .support-upper-arm,
 .stage[data-stroke="bak"].is-hit .support-upper-arm,
-.stage[data-stroke="rak"].is-hit .support-upper-arm {
+.stage[data-stroke="arabic"].is-hit .support-upper-arm,
+.stage[data-stroke="phrase"].is-hit .support-upper-arm {
     transform: rotate(-3deg) translate(-4px, 4px);
 }
 
 .stage[data-stroke="dom"].is-hit .support-forearm,
 .stage[data-stroke="bak"].is-hit .support-forearm,
-.stage[data-stroke="rak"].is-hit .support-forearm {
+.stage[data-stroke="arabic"].is-hit .support-forearm,
+.stage[data-stroke="phrase"].is-hit .support-forearm {
     transform: rotate(5deg) translate(-2px, 5px);
 }
 
 .stage[data-stroke="dom"].is-hit .support-hand,
 .stage[data-stroke="bak"].is-hit .support-hand,
-.stage[data-stroke="rak"].is-hit .support-hand {
+.stage[data-stroke="arabic"].is-hit .support-hand,
+.stage[data-stroke="phrase"].is-hit .support-hand {
     transform: rotate(6deg) translate(-2px, 3px);
 }
 
@@ -714,7 +721,8 @@ input[type="range"] {
     transform: rotate(-1.2deg) translateY(2px);
 }
 
-.stage[data-stroke="rak"].is-hit .head-unit {
+.stage[data-stroke="arabic"].is-hit .head-unit,
+.stage[data-stroke="phrase"].is-hit .head-unit {
     transform: rotate(-2.2deg) translate(-2px, -2px);
 }
 

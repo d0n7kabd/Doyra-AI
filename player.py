@@ -61,6 +61,8 @@ class DoyraPlayer:
             elif sound is not None and self.audio_available:
                 print(f"Playing: {normalized_stroke}")
                 sound.play()
+                time.sleep(max(step_duration, sound.get_length()))
+                continue
             else:
                 print(f"Playing: {normalized_stroke} (missing sample, silent placeholder)")
 

@@ -1,0 +1,10 @@
+{
+  "patterns": [
+    ["dom", "bak", "dom", "bak", "dom", "bak", "dom", "bak"],
+    ["dom", "dom", "bak", "dom", "bak", "bak", "dom", "bak"],
+    ["bak", "dom", "bak", "dom", "dom", "bak", "dom", "bak"],
+    ["dom", "bak", "bak", "dom", "dom", "bak", "bak", "dom"],
+    ["bak", "bak", "dom", "bak", "dom", "dom", "bak", "dom"],
+    ["dom", "dom", "bak", "bak", "dom", "bak", "dom", "bak"]
+  ]
+}

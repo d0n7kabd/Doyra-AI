@@ -1,276 +1,268 @@
-const presets = {
-    "samarkand-drive": ["dom", "bak", "rak", "rest", "dom", "rak", "bak", "rest", "dom", "bak", "rak", "dom"],
-    "ceremonial-loop": ["dom", "rest", "dom", "bak", "rak", "bak", "dom", "rak", "rest", "dom", "bak", "rak"],
-    "night-caravan": ["rak", "bak", "dom", "rest", "rak", "dom", "bak", "rak", "dom", "rest", "bak", "rak"],
-    "machine-zarb": ["dom", "dom", "rak", "bak", "rest", "rak", "dom", "bak", "dom", "rak", "bak", "rest"]
-};
+const sampleFiles = [
+    { id: "dom", label: "dom", file: "dom.wav" },
+    { id: "bak", label: "bak", file: "bak.wav" },
+    { id: "dom bak bak dom bak", label: "dom bak bak dom bak", file: "Dom Bak Bak Dom Bak.wav" },
+    { id: "arabic", label: "arabic", file: "Arabic.wav" }
+];
 
 const strokeColors = {
     dom: "#f3b15a",
     bak: "#6ae1ce",
-    rak: "#f27c9b",
+    arabic: "#f27c9b",
+    phrase: "#9ee7d8",
     rest: "#7e9188"
 };
 
 const elements = {
     playButton: document.getElementById("playButton"),
     stopButton: document.getElementById("stopButton"),
-    presetSelect: document.getElementById("presetSelect"),
-    bpmSlider: document.getElementById("bpmSlider"),
-    bpmValue: document.getElementById("bpmValue"),
     sequenceInput: document.getElementById("sequenceInput"),
     sequenceGrid: document.getElementById("sequenceGrid"),
     sequenceLength: document.getElementById("sequenceLength"),
     currentStroke: document.getElementById("currentStroke"),
     stage: document.getElementById("stage"),
-    robotRig: document.getElementById("robotRig"),
-    robotParts: {
-        headUnit: document.getElementById("headUnit"),
-        torsoCore: document.getElementById("torsoCore"),
-        strikingUpperArm: document.getElementById("strikingUpperArm"),
-        strikingForearm: document.getElementById("strikingForearm"),
-        strikingHand: document.getElementById("strikingHand"),
-        supportUpperArm: document.getElementById("supportUpperArm"),
-        supportForearm: document.getElementById("supportForearm"),
-        supportHand: document.getElementById("supportHand"),
-        doyraGroup: document.getElementById("doyraGroup")
-    },
-    strokePills: Array.from(document.querySelectorAll(".stroke-pill"))
+    sampleButtons: document.getElementById("sampleButtons")
 };
 
 const state = {
     isPlaying: false,
     audioContext: null,
-    noiseBuffer: null,
-    activeTimeout: null
+    samples: new Map(),
+    activeSource: null,
+    timers: []
 };
 
 function ensureAudioContext() {
     if (!state.audioContext) {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         state.audioContext = new AudioContextClass();
-        state.noiseBuffer = createNoiseBuffer(state.audioContext);
     }
 
     if (state.audioContext.state === "suspended") {
-        state.audioContext.resume();
+        return state.audioContext.resume();
     }
+
+    return Promise.resolve();
 }
 
-function createNoiseBuffer(context) {
-    const buffer = context.createBuffer(1, context.sampleRate, context.sampleRate);
-    const data = buffer.getChannelData(0);
+function sampleUrl(file) {
+    return `../samples/${encodeURIComponent(file).replaceAll("%20", " ")}`;
+}
 
-    for (let i = 0; i < data.length; i += 1) {
-        data[i] = Math.random() * 2 - 1;
+async function loadSample(sample) {
+    const response = await fetch(sampleUrl(sample.file));
+    if (!response.ok) {
+        throw new Error(`Could not load ${sample.file}`);
     }
 
-    return buffer;
+    const arrayBuffer = await response.arrayBuffer();
+    const audioBuffer = await state.audioContext.decodeAudioData(arrayBuffer);
+    const onsets = detectOnsets(audioBuffer);
+    return { ...sample, audioBuffer, onsets };
+}
+
+async function loadSamples() {
+    await ensureAudioContext();
+    const loadedSamples = await Promise.all(sampleFiles.map(loadSample));
+    loadedSamples.forEach((sample) => state.samples.set(sample.id, sample));
+}
+
+function detectOnsets(audioBuffer) {
+    const channel = audioBuffer.getChannelData(0);
+    const sampleRate = audioBuffer.sampleRate;
+    const frameSize = Math.max(512, Math.round(sampleRate * 0.012));
+    const energies = [];
+
+    for (let offset = 0; offset < channel.length; offset += frameSize) {
+        let sum = 0;
+        for (let index = offset; index < Math.min(offset + frameSize, channel.length); index += 1) {
+            sum += channel[index] * channel[index];
+        }
+        energies.push(Math.sqrt(sum / frameSize));
+    }
+
+    const peak = Math.max(...energies, 0.001);
+    const onsets = [];
+    let lastOnsetTime = -0.12;
+
+    for (let index = 1; index < energies.length; index += 1) {
+        const previous = energies[index - 1];
+        const current = energies[index];
+        const time = (index * frameSize) / sampleRate;
+        const isPeak = current > peak * 0.24 && current > previous * 1.55;
+
+        if (isPeak && time - lastOnsetTime >= 0.11) {
+            onsets.push(time);
+            lastOnsetTime = time;
+        }
+    }
+
+    if (!onsets.length || onsets[0] > 0.08) {
+        onsets.unshift(0);
+    }
+
+    return onsets.slice(0, 32);
 }
 
 function parseSequence(raw) {
-    return raw
-        .split(/[\s,]+/)
-        .map((token) => token.trim().toLowerCase())
-        .filter(Boolean)
-        .filter((token) => ["dom", "bak", "rak", "rest"].includes(token));
+    const normalized = raw.toLowerCase().replaceAll("\n", " ").trim();
+    if (!normalized) {
+        return [];
+    }
+
+    const tokens = [];
+    let cursor = 0;
+    const idsByLength = sampleFiles.map((sample) => sample.id).sort((a, b) => b.length - a.length);
+
+    while (cursor < normalized.length) {
+        while (normalized[cursor] === " " || normalized[cursor] === ",") {
+            cursor += 1;
+        }
+
+        const remaining = normalized.slice(cursor);
+        const matchedId = idsByLength.find((id) => {
+            if (!remaining.startsWith(id)) {
+                return false;
+            }
+            const nextChar = remaining[id.length];
+            return !nextChar || nextChar === " " || nextChar === ",";
+        });
+
+        if (matchedId) {
+            tokens.push(matchedId);
+            cursor += matchedId.length;
+            continue;
+        }
+
+        const nextBreak = remaining.search(/[\s,]/);
+        cursor += nextBreak === -1 ? remaining.length : nextBreak + 1;
+    }
+
+    return tokens;
 }
 
 function renderSequence(sequence) {
     elements.sequenceGrid.innerHTML = "";
-    sequence.forEach((stroke, index) => {
+
+    sequence.forEach((id, index) => {
+        const sample = state.samples.get(id) || sampleFiles.find((item) => item.id === id);
         const step = document.createElement("div");
-        step.className = `sequence-step stroke-${stroke}`;
+        step.className = `sequence-step stroke-${id.replaceAll(" ", "-")}`;
         step.dataset.index = String(index);
-        step.textContent = stroke;
+        step.textContent = sample?.label || id;
         elements.sequenceGrid.appendChild(step);
     });
+
     elements.sequenceLength.textContent = String(sequence.length);
 }
 
-function setPreset(presetKey) {
-    const sequence = presets[presetKey] || presets["samarkand-drive"];
-    elements.sequenceInput.value = sequence.join(" ");
-    renderSequence(sequence);
-}
-
-function updateBpmLabel() {
-    elements.bpmValue.textContent = elements.bpmSlider.value;
-}
-
 function updateActiveStep(index) {
-    const steps = Array.from(elements.sequenceGrid.children);
-    steps.forEach((step) => step.classList.remove("is-active"));
-    const current = steps[index];
+    Array.from(elements.sequenceGrid.children).forEach((step) => step.classList.remove("is-active"));
+    const current = elements.sequenceGrid.children[index];
     if (current) {
         current.classList.add("is-active");
     }
 }
 
-function animateStroke(stroke) {
-    elements.currentStroke.textContent = stroke.toUpperCase();
-    elements.stage.dataset.stroke = stroke;
-    document.documentElement.style.setProperty("--pulse-color", strokeColors[stroke] || "#ffffff");
+function strokeKind(label) {
+    if (label === "dom" || label.includes("dom")) {
+        return "dom";
+    }
+    if (label === "bak" || label.includes("bak")) {
+        return "bak";
+    }
+    if (label.includes("arabic")) {
+        return "arabic";
+    }
+    return "phrase";
+}
+
+function animateStroke(label) {
+    const kind = strokeKind(label);
+    elements.currentStroke.textContent = label.toUpperCase();
+    elements.stage.dataset.stroke = kind;
+    document.documentElement.style.setProperty("--pulse-color", strokeColors[kind] || strokeColors.phrase);
 
     elements.stage.classList.remove("is-hit");
     void elements.stage.offsetWidth;
     elements.stage.classList.add("is-hit");
 
-    if (state.activeTimeout) {
-        window.clearTimeout(state.activeTimeout);
-    }
-
-    state.activeTimeout = window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
         elements.stage.classList.remove("is-hit");
-    }, 280);
+    }, 170);
+    state.timers.push(timer);
 }
 
-function playDom(context, startTime) {
-    const oscillator = context.createOscillator();
-    const subOscillator = context.createOscillator();
-    const gain = context.createGain();
-
-    oscillator.type = "triangle";
-    subOscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(120, startTime);
-    oscillator.frequency.exponentialRampToValueAtTime(58, startTime + 0.18);
-    subOscillator.frequency.setValueAtTime(62, startTime);
-    subOscillator.frequency.exponentialRampToValueAtTime(42, startTime + 0.19);
-
-    gain.gain.setValueAtTime(0.0001, startTime);
-    gain.gain.exponentialRampToValueAtTime(0.7, startTime + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.22);
-
-    oscillator.connect(gain);
-    subOscillator.connect(gain);
-    gain.connect(context.destination);
-
-    oscillator.start(startTime);
-    subOscillator.start(startTime);
-    oscillator.stop(startTime + 0.24);
-    subOscillator.stop(startTime + 0.24);
+function clearTimers() {
+    state.timers.forEach((timer) => window.clearTimeout(timer));
+    state.timers = [];
 }
 
-function playBak(context, startTime) {
-    const source = context.createBufferSource();
-    source.buffer = state.noiseBuffer;
-
-    const bandpass = context.createBiquadFilter();
-    bandpass.type = "bandpass";
-    bandpass.frequency.setValueAtTime(1700, startTime);
-    bandpass.Q.value = 1.6;
-
-    const highpass = context.createBiquadFilter();
-    highpass.type = "highpass";
-    highpass.frequency.setValueAtTime(900, startTime);
-
-    const gain = context.createGain();
-    gain.gain.setValueAtTime(0.0001, startTime);
-    gain.gain.exponentialRampToValueAtTime(0.54, startTime + 0.005);
-    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.12);
-
-    source.connect(bandpass);
-    bandpass.connect(highpass);
-    highpass.connect(gain);
-    gain.connect(context.destination);
-
-    source.start(startTime);
-    source.stop(startTime + 0.14);
+function scheduleOnsetAnimations(sample) {
+    const phraseParts = sample.id.split(" ");
+    sample.onsets.forEach((onset, index) => {
+        const label = phraseParts.length > 1 ? phraseParts[index % phraseParts.length] : sample.label;
+        const timer = window.setTimeout(() => animateStroke(label), Math.max(0, onset * 1000));
+        state.timers.push(timer);
+    });
 }
 
-function playRak(context, startTime) {
-    const oscillator = context.createOscillator();
-    const source = context.createBufferSource();
-    source.buffer = state.noiseBuffer;
-
-    const oscillatorGain = context.createGain();
-    const noiseGain = context.createGain();
-    const filter = context.createBiquadFilter();
-
-    oscillator.type = "square";
-    oscillator.frequency.setValueAtTime(960, startTime);
-    oscillator.frequency.exponentialRampToValueAtTime(460, startTime + 0.08);
-
-    oscillatorGain.gain.setValueAtTime(0.0001, startTime);
-    oscillatorGain.gain.exponentialRampToValueAtTime(0.23, startTime + 0.003);
-    oscillatorGain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.09);
-
-    filter.type = "bandpass";
-    filter.frequency.setValueAtTime(2600, startTime);
-    filter.Q.value = 3.4;
-
-    noiseGain.gain.setValueAtTime(0.0001, startTime);
-    noiseGain.gain.exponentialRampToValueAtTime(0.15, startTime + 0.002);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.06);
-
-    oscillator.connect(oscillatorGain);
-    oscillatorGain.connect(context.destination);
-
-    source.connect(filter);
-    filter.connect(noiseGain);
-    noiseGain.connect(context.destination);
-
-    oscillator.start(startTime);
-    source.start(startTime);
-    oscillator.stop(startTime + 0.1);
-    source.stop(startTime + 0.08);
-}
-
-function triggerStroke(stroke) {
-    if (stroke === "rest") {
-        return;
-    }
-
-    ensureAudioContext();
-    const context = state.audioContext;
-    const startTime = context.currentTime + 0.01;
-
-    if (stroke === "dom") {
-        playDom(context, startTime);
-        return;
-    }
-
-    if (stroke === "bak") {
-        playBak(context, startTime);
-        return;
-    }
-
-    if (stroke === "rak") {
-        playRak(context, startTime);
-    }
-}
-
-function sleep(ms) {
+function playSample(sample) {
     return new Promise((resolve) => {
-        window.setTimeout(resolve, ms);
+        const source = state.audioContext.createBufferSource();
+        source.buffer = sample.audioBuffer;
+        source.connect(state.audioContext.destination);
+        state.activeSource = source;
+
+        scheduleOnsetAnimations(sample);
+        source.onended = () => {
+            state.activeSource = null;
+            resolve();
+        };
+        source.start();
     });
 }
 
 async function playSequence() {
-    const sequence = parseSequence(elements.sequenceInput.value);
-    if (!sequence.length || state.isPlaying) {
+    if (state.isPlaying) {
         return;
     }
 
-    ensureAudioContext();
+    try {
+        if (!state.samples.size) {
+            elements.currentStroke.textContent = "Loading";
+            await loadSamples();
+        } else {
+            await ensureAudioContext();
+        }
+    } catch (error) {
+        elements.currentStroke.textContent = "Load failed";
+        console.error(error);
+        return;
+    }
+
+    const sequence = parseSequence(elements.sequenceInput.value);
+    if (!sequence.length) {
+        elements.currentStroke.textContent = "No samples";
+        return;
+    }
+
     state.isPlaying = true;
     elements.stage.classList.add("is-playing");
-    elements.currentStroke.textContent = "Starting";
     renderSequence(sequence);
-
-    const bpm = Number(elements.bpmSlider.value);
-    const stepMs = 60000 / bpm;
 
     for (let index = 0; index < sequence.length; index += 1) {
         if (!state.isPlaying) {
             break;
         }
 
-        const stroke = sequence[index];
+        const sample = state.samples.get(sequence[index]);
+        if (!sample) {
+            continue;
+        }
+
         updateActiveStep(index);
-        animateStroke(stroke);
-        triggerStroke(stroke);
-        await sleep(stepMs);
+        await playSample(sample);
     }
 
     stopSequence();
@@ -278,35 +270,47 @@ async function playSequence() {
 
 function stopSequence() {
     state.isPlaying = false;
+    clearTimers();
+
+    if (state.activeSource) {
+        try {
+            state.activeSource.stop();
+        } catch {
+            // Source may already have ended.
+        }
+        state.activeSource = null;
+    }
+
     elements.stage.classList.remove("is-playing", "is-hit");
     elements.stage.dataset.stroke = "rest";
     elements.currentStroke.textContent = "Idle";
     Array.from(elements.sequenceGrid.children).forEach((step) => step.classList.remove("is-active"));
 }
 
+function appendToken(token) {
+    const current = elements.sequenceInput.value.trim();
+    elements.sequenceInput.value = current ? `${current} ${token}` : token;
+    renderSequence(parseSequence(elements.sequenceInput.value));
+}
+
+function renderSampleButtons() {
+    elements.sampleButtons.innerHTML = "";
+    sampleFiles.forEach((sample) => {
+        const button = document.createElement("button");
+        button.className = "stroke-pill";
+        button.type = "button";
+        button.textContent = sample.label.toUpperCase();
+        button.addEventListener("click", () => appendToken(sample.id));
+        elements.sampleButtons.appendChild(button);
+    });
+}
+
 elements.playButton.addEventListener("click", playSequence);
 elements.stopButton.addEventListener("click", stopSequence);
-
-elements.presetSelect.addEventListener("change", (event) => {
-    setPreset(event.target.value);
-});
-
-elements.bpmSlider.addEventListener("input", updateBpmLabel);
-
-elements.sequenceInput.addEventListener("input", () => {
-    renderSequence(parseSequence(elements.sequenceInput.value));
-});
-
-elements.strokePills.forEach((pill) => {
-    pill.addEventListener("click", () => {
-        const current = elements.sequenceInput.value.trim();
-        elements.sequenceInput.value = current ? `${current} ${pill.dataset.token}` : pill.dataset.token;
-        renderSequence(parseSequence(elements.sequenceInput.value));
-    });
-});
+elements.sequenceInput.addEventListener("input", () => renderSequence(parseSequence(elements.sequenceInput.value)));
 
 document.addEventListener("keydown", (event) => {
-    if (event.code === "Space") {
+    if (event.code === "Space" && event.target !== elements.sequenceInput) {
         event.preventDefault();
         if (state.isPlaying) {
             stopSequence();
@@ -316,6 +320,7 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-updateBpmLabel();
 elements.stage.dataset.stroke = "rest";
-setPreset(elements.presetSelect.value);
+elements.sequenceInput.value = "dom bak bak dom bak arabic";
+renderSampleButtons();
+renderSequence(parseSequence(elements.sequenceInput.value));

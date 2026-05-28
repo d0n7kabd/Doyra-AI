@@ -174,40 +174,15 @@
                     <span></span>
                 </div>
                 <div class="stage-dock">
-                    <div class="dock-main">
-                        <label class="field compact-field">
-                            <span>Preset</span>
-                            <select id="presetSelect">
-                                <option value="samarkand-drive">Samarkand Drive</option>
-                                <option value="ceremonial-loop">Ceremonial Loop</option>
-                                <option value="night-caravan">Night Caravan</option>
-                                <option value="machine-zarb">Machine Zarb</option>
-                            </select>
-                        </label>
-
-                        <label class="field compact-field">
-                            <span>BPM</span>
-                            <div class="range-row">
-                                <input id="bpmSlider" type="range" min="70" max="150" value="108">
-                                <strong id="bpmValue">108</strong>
-                            </div>
-                        </label>
-                    </div>
-
                     <label class="field dock-sequence">
                         <span>Sequence</span>
-                        <textarea id="sequenceInput" rows="2" spellcheck="false">dom bak rak rest dom rak bak rest dom bak rak dom</textarea>
+                        <textarea id="sequenceInput" rows="2" spellcheck="false">dom bak bak dom bak arabic</textarea>
                     </label>
 
                     <div class="dock-footer">
-                        <div class="stroke-legend">
-                            <button class="stroke-pill" data-token="dom" type="button">DOM</button>
-                            <button class="stroke-pill" data-token="bak" type="button">BAK</button>
-                            <button class="stroke-pill" data-token="rak" type="button">RAK</button>
-                            <button class="stroke-pill" data-token="rest" type="button">REST</button>
-                        </div>
+                        <div id="sampleButtons" class="stroke-legend"></div>
                         <div class="metric-inline">
-                            <span>Length</span>
+                            <span>Clips</span>
                             <strong id="sequenceLength">0</strong>
                         </div>
                     </div>
