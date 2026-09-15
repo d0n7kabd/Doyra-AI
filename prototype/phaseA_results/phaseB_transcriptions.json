@@ -1,0 +1,974 @@
+{
+  "Usul_1_normal": [
+    {
+      "time_sec": 0.881,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.21
+    },
+    {
+      "time_sec": 1.571,
+      "pred": "bum_secondary",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 1.868,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 2.134,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.41
+    },
+    {
+      "time_sec": 2.434,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.59
+    },
+    {
+      "time_sec": 2.736,
+      "pred": "bum_secondary",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 3.308,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 3.471,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 4.481,
+      "pred": "kichik_bak_main",
+      "confidence": 0.51
+    },
+    {
+      "time_sec": 4.756,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.64
+    },
+    {
+      "time_sec": 5.065,
+      "pred": "kichik_bum_main",
+      "confidence": 0.36
+    },
+    {
+      "time_sec": 8.001,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.48
+    },
+    {
+      "time_sec": 8.596,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 8.853,
+      "pred": "bak_main",
+      "confidence": 0.28
+    },
+    {
+      "time_sec": 9.122,
+      "pred": "kichik_bak_main",
+      "confidence": 0.37
+    },
+    {
+      "time_sec": 9.402,
+      "pred": "kichik_bak_main",
+      "confidence": 0.58
+    },
+    {
+      "time_sec": 9.702,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 10.215,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.41
+    },
+    {
+      "time_sec": 11.11,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 11.378,
+      "pred": "kichik_bak_main",
+      "confidence": 0.31
+    },
+    {
+      "time_sec": 11.665,
+      "pred": "kichik_bak_main",
+      "confidence": 0.39
+    },
+    {
+      "time_sec": 11.971,
+      "pred": "kichik_bum_main",
+      "confidence": 0.17
+    },
+    {
+      "time_sec": 15.21,
+      "pred": "bak_main",
+      "confidence": 0.16
+    },
+    {
+      "time_sec": 15.781,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 16.046,
+      "pred": "kichik_bak_main",
+      "confidence": 0.41
+    },
+    {
+      "time_sec": 16.327,
+      "pred": "kichik_bak_main",
+      "confidence": 0.66
+    },
+    {
+      "time_sec": 16.578,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.36
+    },
+    {
+      "time_sec": 16.892,
+      "pred": "kichik_bum_main",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 17.378,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.35
+    },
+    {
+      "time_sec": 18.235,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.54
+    },
+    {
+      "time_sec": 18.511,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 18.778,
+      "pred": "kichik_bak_main",
+      "confidence": 0.58
+    },
+    {
+      "time_sec": 19.085,
+      "pred": "bum_secondary",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 21.907,
+      "pred": "bak_main",
+      "confidence": 0.26
+    },
+    {
+      "time_sec": 22.487,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 23.012,
+      "pred": "kichik_bak_main",
+      "confidence": 0.43
+    },
+    {
+      "time_sec": 23.279,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.32
+    },
+    {
+      "time_sec": 23.577,
+      "pred": "bum_secondary",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 24.073,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 24.227,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 24.874,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.44
+    },
+    {
+      "time_sec": 25.153,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.47
+    },
+    {
+      "time_sec": 25.423,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.75
+    },
+    {
+      "time_sec": 25.701,
+      "pred": "kichik_bum_main",
+      "confidence": 0.2
+    }
+  ],
+  "Usul_2_normal": [
+    {
+      "time_sec": 1.104,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 1.389,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 1.608,
+      "pred": "bak_main",
+      "confidence": 0.31
+    },
+    {
+      "time_sec": 1.88,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 2.365,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.5
+    },
+    {
+      "time_sec": 2.643,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 3.087,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.54
+    },
+    {
+      "time_sec": 3.352,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 3.797,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.64
+    },
+    {
+      "time_sec": 6.509,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 6.762,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 7.714,
+      "pred": "kichik_bak_main",
+      "confidence": 0.34
+    },
+    {
+      "time_sec": 7.968,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 8.231,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 8.446,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.54
+    },
+    {
+      "time_sec": 8.72,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 8.95,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 9.158,
+      "pred": "bak_main",
+      "confidence": 0.28
+    },
+    {
+      "time_sec": 9.36,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.21
+    },
+    {
+      "time_sec": 12.709,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 14.326,
+      "pred": "kichik_bak_main",
+      "confidence": 0.37
+    },
+    {
+      "time_sec": 15.0,
+      "pred": "kichik_bak_main",
+      "confidence": 0.39
+    },
+    {
+      "time_sec": 18.384,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 19.334,
+      "pred": "kichik_bak_main",
+      "confidence": 0.23
+    },
+    {
+      "time_sec": 20.03,
+      "pred": "bak_secondary",
+      "confidence": 0.23
+    },
+    {
+      "time_sec": 20.509,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 20.719,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 21.199,
+      "pred": "bum_secondary",
+      "confidence": 0.18
+    }
+  ],
+  "Usul_3_normal": [
+    {
+      "time_sec": 0.641,
+      "pred": "kichik_bak_main",
+      "confidence": 0.64
+    },
+    {
+      "time_sec": 0.902,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 1.158,
+      "pred": "bak_main",
+      "confidence": 0.22
+    },
+    {
+      "time_sec": 2.095,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 3.063,
+      "pred": "bak_secondary",
+      "confidence": 0.4
+    },
+    {
+      "time_sec": 3.711,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 3.971,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.23
+    },
+    {
+      "time_sec": 6.658,
+      "pred": "bak_main",
+      "confidence": 0.31
+    },
+    {
+      "time_sec": 7.131,
+      "pred": "bak_secondary",
+      "confidence": 0.24
+    },
+    {
+      "time_sec": 7.994,
+      "pred": "bak_main",
+      "confidence": 0.5
+    },
+    {
+      "time_sec": 8.431,
+      "pred": "noxun_secondary",
+      "confidence": 0.42
+    },
+    {
+      "time_sec": 8.882,
+      "pred": "bak_secondary",
+      "confidence": 0.29
+    },
+    {
+      "time_sec": 9.747,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.37
+    },
+    {
+      "time_sec": 13.131,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.27
+    },
+    {
+      "time_sec": 13.577,
+      "pred": "bak_secondary",
+      "confidence": 0.71
+    },
+    {
+      "time_sec": 15.337,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.35
+    },
+    {
+      "time_sec": 15.5,
+      "pred": "kichik_bum_main",
+      "confidence": 0.3
+    },
+    {
+      "time_sec": 15.921,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.48
+    },
+    {
+      "time_sec": 16.173,
+      "pred": "bak_secondary",
+      "confidence": 0.7
+    },
+    {
+      "time_sec": 19.091,
+      "pred": "bak_main",
+      "confidence": 0.48
+    },
+    {
+      "time_sec": 19.561,
+      "pred": "bak_main",
+      "confidence": 0.17
+    },
+    {
+      "time_sec": 20.387,
+      "pred": "bak_secondary",
+      "confidence": 0.31
+    },
+    {
+      "time_sec": 21.235,
+      "pred": "bak_secondary",
+      "confidence": 0.48
+    },
+    {
+      "time_sec": 22.042,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.27
+    }
+  ],
+  "Usul_4_normal": [
+    {
+      "time_sec": 0.962,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 1.189,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.22
+    },
+    {
+      "time_sec": 1.581,
+      "pred": "bak_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 1.826,
+      "pred": "bum_secondary",
+      "confidence": 0.3
+    },
+    {
+      "time_sec": 2.24,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.2
+    },
+    {
+      "time_sec": 2.72,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 2.927,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 3.332,
+      "pred": "bak_secondary",
+      "confidence": 0.17
+    },
+    {
+      "time_sec": 3.587,
+      "pred": "kichik_bum_main",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 3.963,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.66
+    },
+    {
+      "time_sec": 4.416,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 4.625,
+      "pred": "kichik_bak_main",
+      "confidence": 0.31
+    },
+    {
+      "time_sec": 5.021,
+      "pred": "kichik_bak_main",
+      "confidence": 0.17
+    },
+    {
+      "time_sec": 5.272,
+      "pred": "bum_secondary",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 5.616,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.42
+    },
+    {
+      "time_sec": 7.946,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 8.152,
+      "pred": "kichik_bak_main",
+      "confidence": 0.22
+    },
+    {
+      "time_sec": 8.58,
+      "pred": "kichik_bak_main",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 8.824,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 9.202,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.52
+    },
+    {
+      "time_sec": 9.666,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 9.846,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.2
+    },
+    {
+      "time_sec": 10.261,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.23
+    },
+    {
+      "time_sec": 10.504,
+      "pred": "bum_secondary",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 10.898,
+      "pred": "kichik_bak_main",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 11.337,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 11.547,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.3
+    },
+    {
+      "time_sec": 11.712,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 11.987,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.65
+    },
+    {
+      "time_sec": 12.259,
+      "pred": "kichik_bum_main",
+      "confidence": 0.32
+    },
+    {
+      "time_sec": 12.615,
+      "pred": "bak_secondary",
+      "confidence": 0.2
+    },
+    {
+      "time_sec": 15.694,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 15.888,
+      "pred": "kichik_bak_main",
+      "confidence": 0.24
+    },
+    {
+      "time_sec": 16.283,
+      "pred": "kichik_bak_main",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 16.528,
+      "pred": "bum_secondary",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 16.915,
+      "pred": "kichik_bak_main",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 17.358,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 17.543,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.24
+    },
+    {
+      "time_sec": 17.948,
+      "pred": "bak_secondary",
+      "confidence": 0.23
+    },
+    {
+      "time_sec": 18.225,
+      "pred": "bum_secondary",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 18.585,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.62
+    },
+    {
+      "time_sec": 19.202,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.23
+    },
+    {
+      "time_sec": 19.595,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.28
+    },
+    {
+      "time_sec": 19.862,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 20.21,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.35
+    },
+    {
+      "time_sec": 20.652,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 20.84,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.21
+    },
+    {
+      "time_sec": 21.245,
+      "pred": "kichik_bak_main",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 21.847,
+      "pred": "kichik_bak_main",
+      "confidence": 0.19
+    }
+  ],
+  "Usul_5_normal": [
+    {
+      "time_sec": 0.551,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 0.759,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.4
+    },
+    {
+      "time_sec": 1.127,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.39
+    },
+    {
+      "time_sec": 2.305,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 3.076,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 3.874,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 4.396,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.33
+    },
+    {
+      "time_sec": 4.612,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 5.399,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 5.742,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.28
+    },
+    {
+      "time_sec": 6.14,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 8.724,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 10.193,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 10.688,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.34
+    },
+    {
+      "time_sec": 10.872,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 11.557,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 12.257,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 12.915,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 13.238,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 13.398,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.24
+    },
+    {
+      "time_sec": 13.591,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 13.902,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.68
+    }
+  ],
+  "Usul_6_normal": [
+    {
+      "time_sec": 0.785,
+      "pred": "kichik_bak_main",
+      "confidence": 0.28
+    },
+    {
+      "time_sec": 1.07,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 1.309,
+      "pred": "kichik_bak_main",
+      "confidence": 0.18
+    },
+    {
+      "time_sec": 1.51,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 1.744,
+      "pred": "bak_main",
+      "confidence": 0.27
+    },
+    {
+      "time_sec": 1.95,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 2.158,
+      "pred": "bum_main",
+      "confidence": 0.23
+    },
+    {
+      "time_sec": 3.171,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 4.73,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 4.933,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 6.266,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 7.234,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 8.647,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 10.306,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 11.934,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 14.09,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.23
+    },
+    {
+      "time_sec": 14.49,
+      "pred": "bak_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 14.806,
+      "pred": "bak_secondary",
+      "confidence": 0.22
+    },
+    {
+      "time_sec": 15.067,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 16.344,
+      "pred": "kichik_bak_main",
+      "confidence": 0.24
+    },
+    {
+      "time_sec": 16.559,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 17.073,
+      "pred": "kichik_bak_secondary",
+      "confidence": 0.21
+    },
+    {
+      "time_sec": 17.842,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    },
+    {
+      "time_sec": 19.58,
+      "pred": "bum_secondary",
+      "confidence": 0.3
+    },
+    {
+      "time_sec": 19.873,
+      "pred": "bum_secondary",
+      "confidence": 0.19
+    }
+  ]
+}

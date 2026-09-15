@@ -1,0 +1,17 @@
+{
+  "best_model_name": "random_forest",
+  "cv_accuracy": 0.9171974522292994,
+  "cv_accuracy_by_model": {
+    "logreg": 0.910828025477707,
+    "svm_rbf": 0.910828025477707,
+    "random_forest": 0.9171974522292994,
+    "knn": 0.8789808917197452
+  },
+  "held_out_test_accuracy": 0.95,
+  "n_train": 157,
+  "n_test": 40,
+  "n_total": 197,
+  "n_classes": 9,
+  "model_path": "C:\\Users\\E-MaxPCShop\\Downloads\\doyra-ai-project\\doyra-ai-project\\models\\phaseA_classifier.joblib",
+  "results_dir": "C:\\Users\\E-MaxPCShop\\Downloads\\doyra-ai-project\\doyra-ai-project\\models\\results"
+}

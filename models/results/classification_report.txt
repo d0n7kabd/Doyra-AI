@@ -1,0 +1,27 @@
+Best model (selected via 5-fold CV on training split): random_forest
+5-fold CV accuracy (train split): 0.917
+Held-out test accuracy: 0.950
+
+CV accuracy by candidate model (train split):
+  logreg: 0.911
+  svm_rbf: 0.911
+  random_forest: 0.917
+  knn: 0.879
+
+Held-out test set classification report:
+
+                      precision    recall  f1-score   support
+
+            bak_main       0.80      1.00      0.89         4
+       bak_secondary       1.00      1.00      1.00         4
+            bum_main       0.80      0.80      0.80         5
+       bum_secondary       1.00      0.80      0.89         5
+     kichik_bak_main       1.00      1.00      1.00         4
+kichik_bak_secondary       1.00      1.00      1.00         4
+     kichik_bum_main       1.00      1.00      1.00         5
+kichik_bum_secondary       1.00      1.00      1.00         5
+     noxun_secondary       1.00      1.00      1.00         4
+
+            accuracy                           0.95        40
+           macro avg       0.96      0.96      0.95        40
+        weighted avg       0.96      0.95      0.95        40
