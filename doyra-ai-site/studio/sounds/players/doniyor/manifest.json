@@ -1,0 +1,114 @@
+{
+  "player": "doniyor",
+  "label": "Doniyor Abdusalimov",
+  "strokes": {
+    "B": {
+      "note": "bum",
+      "hand": "main",
+      "files": [
+        "bum_main_1.m4a",
+        "bum_main_2.m4a",
+        "bum_main_3.m4a",
+        "bum_main_4.m4a",
+        "bum_main_5.m4a",
+        "bum_main_6.m4a"
+      ]
+    },
+    "b": {
+      "note": "bum",
+      "hand": "secondary",
+      "files": [
+        "bum_secondary_1.m4a",
+        "bum_secondary_2.m4a",
+        "bum_secondary_3.m4a",
+        "bum_secondary_4.m4a",
+        "bum_secondary_5.m4a",
+        "bum_secondary_6.m4a"
+      ]
+    },
+    "T": {
+      "note": "bak",
+      "hand": "main",
+      "files": [
+        "bak_main_1.m4a",
+        "bak_main_2.m4a",
+        "bak_main_3.m4a",
+        "bak_main_4.m4a",
+        "bak_main_5.m4a",
+        "bak_main_6.m4a"
+      ]
+    },
+    "t": {
+      "note": "bak",
+      "hand": "secondary",
+      "files": [
+        "bak_secondary_1.m4a",
+        "bak_secondary_2.m4a",
+        "bak_secondary_3.m4a",
+        "bak_secondary_4.m4a",
+        "bak_secondary_5.m4a",
+        "bak_secondary_6.m4a"
+      ]
+    },
+    "K": {
+      "note": "kichik_bak",
+      "hand": "main",
+      "files": [
+        "kichik_bak_main_1.m4a",
+        "kichik_bak_main_2.m4a",
+        "kichik_bak_main_3.m4a",
+        "kichik_bak_main_4.m4a",
+        "kichik_bak_main_5.m4a",
+        "kichik_bak_main_6.m4a"
+      ]
+    },
+    "k": {
+      "note": "kichik_bak",
+      "hand": "secondary",
+      "files": [
+        "kichik_bak_secondary_1.m4a",
+        "kichik_bak_secondary_2.m4a",
+        "kichik_bak_secondary_3.m4a",
+        "kichik_bak_secondary_4.m4a",
+        "kichik_bak_secondary_5.m4a",
+        "kichik_bak_secondary_6.m4a"
+      ]
+    },
+    "M": {
+      "note": "kichik_bum",
+      "hand": "main",
+      "files": [
+        "kichik_bum_main_1.m4a",
+        "kichik_bum_main_2.m4a",
+        "kichik_bum_main_3.m4a",
+        "kichik_bum_main_4.m4a",
+        "kichik_bum_main_5.m4a",
+        "kichik_bum_main_6.m4a"
+      ]
+    },
+    "m": {
+      "note": "kichik_bum",
+      "hand": "secondary",
+      "files": [
+        "kichik_bum_secondary_1.m4a",
+        "kichik_bum_secondary_2.m4a",
+        "kichik_bum_secondary_3.m4a",
+        "kichik_bum_secondary_4.m4a",
+        "kichik_bum_secondary_5.m4a",
+        "kichik_bum_secondary_6.m4a"
+      ]
+    },
+    "n": {
+      "note": "noxun",
+      "hand": "secondary",
+      "files": [
+        "noxun_secondary_1.m4a",
+        "noxun_secondary_2.m4a",
+        "noxun_secondary_3.m4a",
+        "noxun_secondary_4.m4a",
+        "noxun_secondary_5.m4a",
+        "noxun_secondary_6.m4a"
+      ]
+    }
+  }
+}

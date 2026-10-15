@@ -6,3 +6,7 @@ build/
 dist/
 .venv/
 venv/
+
+# song audio stays on this laptop (copyright)
+songs/
+doyra-ai-site/studio/library/audio/

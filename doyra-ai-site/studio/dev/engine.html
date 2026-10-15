@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engine check — Doyra Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  /* Developer page for Phase 1: is the engine hearing the song right? */
+  :root { --ink: #0a1430; --skin: #f1e4c8; --gold: #e0a93b; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ink); color: var(--skin); font: 18px/1.5 "Newsreader", Georgia, serif; overflow-x: clip; }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 60px; }
+  h1 { font: 700 22px "Unbounded", sans-serif; margin: 0 0 4px; }
+  .sub { opacity: .65; font-style: italic; margin: 0 0 22px; }
+  button, label.file { font: 500 14px "Unbounded", sans-serif; color: var(--skin); background: none; border: 1.5px solid rgba(241,228,200,.3); border-radius: 999px; padding: 10px 16px; cursor: pointer; }
+  button.primary { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  button:disabled { opacity: .4; cursor: default; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 0 0 18px; }
+  input[type=file] { display: none; }
+  #status { min-height: 1.5em; opacity: .8; }
+  dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; margin: 0 0 18px; }
+  dl[hidden] { display: none; }
+  dt { opacity: .6; font-style: italic; }
+  dd { margin: 0; }
+  canvas { width: 100%; height: 120px; display: block; border-radius: 10px; background: rgba(241,228,200,.05); cursor: pointer; touch-action: manipulation; }
+  .legend { font-size: 15px; opacity: .65; margin: 8px 0 18px; }
+  label.mix { display: flex; align-items: center; gap: 10px; font-size: 16px; }
+  input[type=range] { accent-color: var(--gold); width: 140px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Engine check</h1>
+  <p class="sub">Phase 1: does the engine find the beat? Real strokes play on every detected beat.</p>
+
+  <div class="row">
+    <button id="load-default">Load Despacito</button>
+    <label class="file">Choose a song… <input type="file" id="file" accept="audio/*"></label>
+    <span id="status"></span>
+  </div>
+
+  <dl id="facts" hidden>
+    <dt>Tempo</dt><dd id="f-tempo"></dd>
+    <dt>Beats</dt><dd id="f-beats"></dd>
+    <dt>First bar line</dt><dd id="f-bar"></dd>
+    <dt>Drums play</dt><dd id="f-drums"></dd>
+    <dt>Analysis</dt><dd id="f-time"></dd>
+    <dt>Strokes</dt><dd id="f-bank"></dd>
+  </dl>
+
+  <canvas id="timeline" aria-label="Song timeline: beats, bar lines and drum sections. Click to jump."></canvas>
+  <p class="legend">Thin lines: beats · tall gold lines: bar lines · shaded: drums playing · click to jump</p>
+
+  <div class="row">
+    <button class="primary" id="play" disabled>Play</button>
+    <label class="mix">Song <input type="range" id="song-vol" min="0" max="1" step="0.01" value="0.8"></label>
+    <label class="mix">Doira <input type="range" id="doira-vol" min="0" max="1.5" step="0.01" value="1"></label>
+  </div>
+  <p class="legend">Listen for: the bum on every bar line, kichik bum on the other beats, a light kichik bak between beats. They should sit right on the song's kick drum.</p>
+</main>
+
+<script type="module">
+import { audioContext, decode, toAnalysisPCM, analyze, StrokeBank } from '../js/engine/audio.js';
+import { Transport } from '../js/engine/transport.js';
+
+const $ = (id) => document.getElementById(id);
+const status = (t) => { $('status').textContent = t; };
+let bank, transport, result;
+
+async function ensureBank() {
+  if (!bank) bank = await StrokeBank.load(new URL('../sounds/players/doniyor/', location.href));
+  return bank;
+}
+
+async function loadSong(arrayBuffer, name) {
+  try {
+    $('play').disabled = true;
+    if (transport) transport.stop();
+    status(`Decoding ${name}…`);
+    const buffer = await decode(arrayBuffer);
+    status('Analysing…');
+    const t0 = performance.now();
+    result = await analyze(await toAnalysisPCM(buffer));
+    const secs = (performance.now() - t0) / 1000;
+    await ensureBank();
+    transport = new Transport({ bank, pattern: beatCheckPattern(result) });
+    transport.onStroke(() => { flash = 1; });
+    transport.setSong(buffer);
+    applyMix();
+    showFacts(result, secs, name);
+    $('play').disabled = false;
+    status('Ready.');
+    draw();
+  } catch (err) {
+    console.error(err);
+    status(`Could not load: ${err.message || err}`);
+  }
+}
+
+// Phase 1 pattern: bum on bar lines, kichik bum on other beats, kichik bak on the "and".
+function beatCheckPattern(r) {
+  return (from, to) => {
+    const out = [];
+    const b = r.beats;
+    for (let i = 0; i < b.length; i++) {
+      if (b[i] >= to) break;
+      const bar = ((i - r.downbeat) % 4 + 4) % 4 === 0;
+      if (b[i] >= from) out.push({ time: b[i], code: bar ? 'B' : 'M', gain: bar ? 1 : 0.8 });
+      const and = i + 1 < b.length ? (b[i] + b[i + 1]) / 2 : b[i] + r.period / 2;
+      if (and >= from && and < to) out.push({ time: and, code: 'K', gain: 0.45 });
+    }
+    return out.sort((p, q) => p.time - q.time);
+  };
+}
+
+function showFacts(r, secs, name) {
+  $('facts').hidden = false;
+  $('f-tempo').textContent = `${r.bpm.toFixed(1)} BPM (confidence ${r.tempoConfidence.toFixed(2)}${r.constantTempo ? ', steady' : ', fitted in stretches'})`;
+  $('f-beats').textContent = `${r.beats.length} beats in ${r.duration.toFixed(0)} s`;
+  $('f-bar').textContent = `${r.beats[r.downbeat].toFixed(2)} s`;
+  $('f-drums').textContent = r.drumWindows.map((w) => `${w.start.toFixed(0)}–${w.end.toFixed(0)} s`).join(', ') || 'none found';
+  $('f-time').textContent = `${secs.toFixed(1)} s for ${name}`;
+  $('f-bank').textContent = `${bank.label}, ${Object.values(bank.takes).flat().length} recorded takes`;
+}
+
+function applyMix() {
+  if (transport) transport.setMix({ song: +$('song-vol').value, doira: +$('doira-vol').value });
+}
+$('song-vol').addEventListener('input', applyMix);
+$('doira-vol').addEventListener('input', applyMix);
+
+$('load-default').addEventListener('click', async () => {
+  audioContext();
+  status('Loading Despacito…');
+  const r = await fetch('../library/audio/despacito_original.mp3');
+  if (!r.ok) { status('Despacito is not on this computer (song files stay on the laptop). Choose a file instead.'); return; }
+  loadSong(await r.arrayBuffer(), 'Despacito');
+});
+$('file').addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  audioContext();
+  loadSong(await f.arrayBuffer(), f.name);
+});
+$('play').addEventListener('click', () => {
+  audioContext();
+  if (transport.playing) transport.stop(true); else transport.play();
+  $('play').textContent = transport.playing ? 'Pause' : 'Play';
+});
+
+// timeline
+const cv = $('timeline'), g = cv.getContext('2d');
+cv.addEventListener('pointerdown', (e) => {
+  if (!transport) return;
+  const r = cv.getBoundingClientRect();
+  transport.seek(((e.clientX - r.left) / r.width) * transport.duration);
+});
+let flash = 0;
+function draw() {
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.clientWidth, h = cv.clientHeight;
+  if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, w, h);
+  if (!result) return;
+  const x = (t) => (t / result.duration) * w;
+  g.fillStyle = 'rgba(224,169,59,.12)';
+  for (const d of result.drumWindows) g.fillRect(x(d.start), 0, x(d.end) - x(d.start), h);
+  result.beats.forEach((t, i) => {
+    const bar = ((i - result.downbeat) % 4 + 4) % 4 === 0;
+    g.fillStyle = bar ? '#e0a93b' : 'rgba(241,228,200,.25)';
+    g.fillRect(x(t), bar ? 10 : 40, 1, bar ? h - 20 : h - 80);
+  });
+  if (transport) {
+    const px = x(transport.position);
+    g.fillStyle = `rgba(241,228,200,${0.6 + flash * 0.4})`;
+    g.fillRect(px - 1, 0, 2 + flash * 2, h);
+  }
+}
+function frame() {
+  if (transport) {
+    transport.tick();
+    $('play').textContent = transport.playing ? 'Pause' : 'Play';
+  }
+  flash *= 0.85;
+  draw();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
