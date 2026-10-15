@@ -9,10 +9,59 @@
 // as close as possible to the usul's own measured spacing.
 import { USULS, STROKES, DEFAULT_GAP } from './usuls.js';
 
-export function usulPattern(an, usulId, { fit = true } = {}) {
-  const u = USULS[usulId];
+// ---------------------------------------------------------------- feel
+// "Player" timing uses the measured gaps; "machine" spaces strokes evenly.
+// The measured unevenness is strong at performance tempo and nearly gone when
+// slow, so it is scaled by the song's stroke spacing: full at the recorded
+// tempo or faster, shrinking linearly to the share kept at the slow
+// recording's tempo (usuls.js: slow.gap, slow.keep), and no further.
+export function feelAmount(u, strokeGap) {
+  if (!u.gaps) return 0;
+  if (!u.slow) return 1;
+  const g0 = u.meanGap, g1 = u.slow.gap;
+  if (strokeGap <= g0) return 1;
+  if (strokeGap >= g1) return u.slow.keep;
+  return 1 + ((strokeGap - g0) / (g1 - g0)) * (u.slow.keep - 1);
+}
+
+// Where each stroke sits in the cycle (0..1), with feel amount f (0 = even).
+export function cyclePositions(u, f) {
+  const n = u.seq.length;
+  let gaps = u.gaps ? [...u.gaps] : [];
+  while (gaps.length < n) gaps.push(u.lastGap ?? 1);
+  if (!u.gaps) gaps = gaps.map(() => 1);
+  const g = gaps.map((x) => 1 + f * (x - 1));
+  const tot = g.reduce((p, q) => p + q, 0);
+  const pos = [];
+  let cum = 0;
+  for (let i = 0; i < n; i++) { pos.push(cum / tot); cum += g[i]; }
+  return pos;
+}
+
+// ---------------------------------------------------------------- placing
+
+export function usulPattern(an, usulId, { fit = true, feel = 'player' } = {}) {
+  const u = USULS[usulId], n = u.seq.length;
   const gap = u.meanGap || DEFAULT_GAP;
-  const slots = usulId === 'toy' ? placeToy(an) : fit ? placeFit(an, u.seq.length, gap) : placeFree(an, u.seq.length, gap);
+  const { period } = an;
+  // the cycle's span on the song, and so the stroke spacing the feel is scaled by
+  let place, strokeGap;
+  if (usulId === 'toy') {
+    strokeGap = (4 * period) / n;
+    place = (pos) => placeSpan(an, 4, pos);
+  } else if (fit) {
+    const span = 4 * Math.max(1, Math.round((n * gap) / (4 * period)));
+    strokeGap = (span * period) / n;
+    place = (pos) => placeSpan(an, span, pos);
+  } else {
+    const step = Math.max(1, Math.round(gap / (period / 4)));
+    strokeGap = (step * period) / 4;
+    place = (pos) => placeFree(an, n, step, pos);
+  }
+  const amount = feel === 'player' ? feelAmount(u, strokeGap) : 0;
+  const positions = cyclePositions(u, amount);
+  const slots = place(positions);
+
   const end = an.duration - 0.15;
   const events = [];
   for (let i = 0; i < slots.length; i++) {
@@ -23,13 +72,15 @@ export function usulPattern(an, usulId, { fit = true } = {}) {
       time: s.time,
       code,
       k: s.k,                   // position in the cycle
-      n: u.seq.length,
+      n,
       cycle: s.cycle,
-      next: i + 1 < slots.length ? slots[i + 1].time : s.time + gap,
+      next: i + 1 < slots.length ? slots[i + 1].time : s.time + strokeGap,
       gain: Math.min(1, STROKES[code].gain * (s.k === 0 ? 1.1 : 1)),
     });
   }
-  return windowed(events);
+  const fn = windowed(events);
+  Object.assign(fn, { feel: amount, positions, strokeGap, usul: usulId });
+  return fn;
 }
 
 // Transport asks for the strokes in [from, to); binary search the precomputed list.
@@ -53,34 +104,30 @@ function beatTime(beats, period, p) {
   return beats[i] + f * (beats[i + 1] - beats[i]);
 }
 
-function placeToy(an) {
-  const out = [];
+// Cycles of `span` beats starting on bar lines; strokes at their cycle positions.
+function placeSpan(an, span, positions) {
   const { beats, downbeat, period } = an;
-  for (let i = downbeat, c = 0; i < beats.length; i++) {
-    const g = (i - downbeat) % 4;
-    if (g === 0 && i > downbeat) c++;
-    for (let j = 0; j < 3; j++) out.push({ time: beatTime(beats, period, i + j / 3), k: g * 3 + j, cycle: c });
-  }
-  return out;
-}
-
-function placeFit(an, n, gap) {
-  const { beats, downbeat, period } = an;
-  const bars = Math.max(1, Math.round((n * gap) / (4 * period)));
-  const span = 4 * bars; // beats per cycle
   const out = [];
   for (let s = downbeat, c = 0; s < beats.length; s += span, c++) {
-    for (let k = 0; k < n; k++) out.push({ time: beatTime(beats, period, s + (k * span) / n), k, cycle: c });
+    positions.forEach((pos, k) => out.push({ time: beatTime(beats, period, s + span * pos), k, cycle: c }));
   }
   return out;
 }
 
-function placeFree(an, n, gap) {
-  const { grid16, firstBeat16, downbeat, period } = an;
-  const step = Math.max(1, Math.round(gap / (period / 4)));
+// Free: one stroke every `step` sixteenths, the cycle drifting against the bar.
+// With feel, strokes move off their grid points by the measured deviations.
+function placeFree(an, n, step, positions) {
+  const { grid16, firstBeat16, downbeat } = an;
+  const at = (x) => {
+    const i = Math.floor(x), f = x - i;
+    if (i + 1 >= grid16.length) return grid16[grid16.length - 1] + (x - (grid16.length - 1)) * (grid16[1] - grid16[0]);
+    return grid16[i] + f * (grid16[i + 1] - grid16[i]);
+  };
   const out = [];
-  for (let g = firstBeat16 + downbeat * 4, s = 0; g < grid16.length; g += step, s++) {
-    out.push({ time: grid16[g], k: s % n, cycle: Math.floor(s / n) });
+  const g0 = firstBeat16 + downbeat * 4;
+  for (let s = 0; g0 + s * step < grid16.length; s++) {
+    const k = s % n, cycleStart = s - k;
+    out.push({ time: at(g0 + (cycleStart + n * positions[k]) * step), k, cycle: Math.floor(s / n) });
   }
   return out;
 }

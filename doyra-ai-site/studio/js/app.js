@@ -2,7 +2,7 @@
 import { audioContext, decode, toAnalysisPCM, analyze, StrokeBank } from './engine/audio.js';
 import { Transport } from './engine/transport.js';
 import { USULS } from './usuls.js';
-import { usulPattern } from './patterns.js';
+import { usulPattern, cyclePositions } from './patterns.js';
 import { Doira } from './doira.js';
 
 const $ = (id) => document.getElementById(id);
@@ -14,6 +14,7 @@ const state = {
   song: null,          // { id, title, artist, buffer, analysis }
   usul: 'auto',        // what the Rhythm control shows
   fit: true,
+  feel: 'player',     // 'player' (measured gaps) or 'machine' (even)
   pattern: null,
   lastStroke: null,
 };
@@ -170,20 +171,23 @@ $('back').addEventListener('click', () => {
 // Until style detection exists, Auto plays to'y: it fits 4/4 songs naturally.
 const resolveUsul = () => (state.usul === 'auto' ? 'toy' : state.usul);
 
-function beadsFor(id) {
+function beadsFor(id, positions) {
   const u = USULS[id];
-  return [...u.seq].map((code, k) => ({ code, pos: k / u.seq.length }));
+  const pos = positions || cyclePositions(u, u.gaps && state.feel === 'player' ? 1 : 0);
+  return [...u.seq].map((code, k) => ({ code, pos: pos[k] }));
 }
 
 function applyRhythm() {
   const id = resolveUsul();
   const u = USULS[id];
   document.querySelector('[data-group="fit"]').hidden = id === 'toy';
-  drum.setBeads(beadsFor(id));
+  // usuls without measured gaps (1, 3) can only be played evenly
+  document.querySelectorAll('[data-feel]').forEach((b) => { b.disabled = !u.gaps; });
   const s = state.song;
-  if (!s) return;
-  state.pattern = usulPattern(s.analysis, id, { fit: state.fit });
+  if (!s) { drum.setBeads(beadsFor(id)); return; }
+  state.pattern = usulPattern(s.analysis, id, { fit: state.fit, feel: state.feel });
   state.transport.setPattern(state.pattern);
+  drum.setBeads(beadsFor(id, state.pattern.positions));
   const how = id === 'toy' ? 'one group per beat' : state.fit ? 'fit to the bar' : 'free against the bar';
   $('subtitle').textContent = `${s.artist ? s.artist + ' · ' : ''}${state.usul === 'auto' ? 'Auto: ' : ''}${u.name}, ${how}`;
   renderFacts();
@@ -201,6 +205,7 @@ document.querySelectorAll('.seg').forEach((seg) => seg.addEventListener('click',
   if (b.dataset.mix) applyMix();
   if (b.dataset.usul) { state.usul = b.dataset.usul; applyRhythm(); }
   if (b.dataset.fit) { state.fit = b.dataset.fit === 'fit'; applyRhythm(); }
+  if (b.dataset.feel) { state.feel = b.dataset.feel; applyRhythm(); }
 }));
 
 function renderFacts() {
@@ -211,6 +216,7 @@ function renderFacts() {
     ['Tempo', `${an.bpm.toFixed(1)} BPM`],
     ['Usul', `${u.name} · ${u.seq.length} strokes${u.note ? ` (${u.note})` : ''}`],
     ['Cycle', u.seq.split('').join(' ')],
+    ['Feel', feelText(u)],
     ['Strokes', `${state.bank.label}, recorded`],
   ];
   let html = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
@@ -223,6 +229,19 @@ function renderFacts() {
     html += `<dt>Download</dt><dd>${links.map(([href, label]) => `<a class="dl" href="${esc(href)}" download>${esc(label)}</a>`).join('<br>')}</dd>`;
   }
   $('facts').innerHTML = html;
+}
+
+function feelText(u) {
+  const p = state.pattern;
+  if (!u.gaps) return 'Even: no measured gaps for this usul';
+  if (state.feel === 'machine') return 'Machine: strokes evenly spaced';
+  const pct = Math.round(p.feel * 100);
+  const gapMs = Math.round(p.strokeGap * 1000);
+  let why;
+  if (!u.slow) why = 'no slow-tempo measurement, so the full measured feel is used';
+  else if (pct === 100) why = `strokes ${gapMs} ms apart; recorded at ${Math.round(u.meanGap * 1000)} ms`;
+  else why = `strokes ${gapMs} ms apart, slower than the recording (${Math.round(u.meanGap * 1000)} ms); the feel fades toward the slow recording (${Math.round(u.slow.gap * 1000)} ms)`;
+  return `Player: ${pct} % of the measured feel (${why})`;
 }
 
 // ---------------------------------------------------------------- playback

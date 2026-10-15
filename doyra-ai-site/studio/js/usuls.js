@@ -14,28 +14,37 @@ export const STROKES = {
   n: { name: 'noxun', hand: 'secondary', kind: 'noxun', syl: 'ka', small: true, gain: 0.7 },
 };
 
-// gaps: measured inter-stroke gaps relative to the mean gap (normal tempo);
-// null where no measurement exists. meanGap in seconds where measured.
+// gaps: measured inter-stroke gaps relative to the mean gap (normal tempo):
+// gaps[i] is the gap from stroke i to stroke i + 1; null where not measured.
+// meanGap: seconds, normal tempo (paper).
+// slow.gap: mean gap of the slow-tempo recording, measured by
+//   tools/measure_usul_tempo.py from Usul_*_slow.m4a (not a paper number);
+// slow.keep: share of the unevenness left at slow tempo (paper).
 export const USULS = {
   toy: {
     name: "To'y", note: 'weddings, yor-yor',
     seq: 'MKKMKKMKKMKK',
     gaps: [1.151, 0.886, 1.033, 1.092, 0.919, 1.038, 1.006, 0.936, 1.061, 0.938, 0.941, 1.0],
     meanGap: 0.236,
+    slow: { gap: 1.048, keep: 0.05 / 0.14 }, // bak-bak ratio 1.14 at normal tempo, 1.05 slow
   },
   u1: { name: 'Usul 1', seq: 'KMKKtMKtKtMKKtM', gaps: null, meanGap: null },
   u3: { name: 'Usul 3', seq: 'KKtMKKtM', gaps: null, meanGap: null },
   u4: {
     name: 'Usul 4', note: 'a phrase repeats it 3 times, the last phrase 4 times',
     seq: 'MKKMK', gaps: [0.652, 1.27, 0.748, 1.148, 1.274], meanGap: 0.334,
+    slow: { gap: 0.776, keep: 7 / 25 },      // unevenness 25 % normal, 7 % slow
   },
   u5: {
     name: 'Usul 5', note: 'long gap into each new cycle',
     seq: 'MKKKMKK', gaps: [0.924, 0.935, 0.882, 1.027, 0.92, 0.897, 1.831], meanGap: 0.195,
+    slow: { gap: 0.806, keep: 4 / 8 },       // unevenness 8 % normal, 4 % slow
   },
   u6: {
     name: 'Usul 6', note: 'keeps speeding up',
     seq: 'KtKtKtK', gaps: [1.28, 0.996, 0.971, 0.962, 0.927, 0.864], meanGap: 0.192, // 6 gaps measured for 7 strokes
+    lastGap: 1.0, // the gap into the next cycle was not measured: the mean gap is assumed
+    slow: null,   // no validated slow measurement: full feel at every tempo
   },
 };
 
