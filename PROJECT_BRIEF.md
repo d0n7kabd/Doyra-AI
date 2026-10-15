@@ -2,8 +2,8 @@
 
 ## What this project is
 Doyra AI is a student research project modeling the rhythmic language of
-the doyra (a traditional Uzbek frame drum), eventually driving a robot
-that performs generated patterns. This stage is scoped to Phase A only:
+the doyra (a traditional Uzbek frame drum). The project is software
+only. This stage is scoped to Phase A only:
 building a solid, well-engineered note classifier from isolated single-hit
 recordings. Sequence/rhythm generation is intentionally NOT in scope yet —
 that depends on a later phase with proper ground-truth phrase labels,
@@ -62,7 +62,6 @@ Turn the prototype into a real, usable package:
 
 ## Explicitly out of scope for this stage
 - No sequence/rhythm/generative modeling
-- No hardware/robot integration code
 - Don't fetch or assume any Phase B data exists — this package should
   work standalone on `data/` as given
 

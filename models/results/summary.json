@@ -12,6 +12,6 @@
   "n_test": 40,
   "n_total": 197,
   "n_classes": 9,
-  "model_path": "C:\\Users\\E-MaxPCShop\\Downloads\\doyra-ai-project\\doyra-ai-project\\models\\phaseA_classifier.joblib",
-  "results_dir": "C:\\Users\\E-MaxPCShop\\Downloads\\doyra-ai-project\\doyra-ai-project\\models\\results"
+  "model_path": "models/phaseA_classifier.joblib",
+  "results_dir": "models/results"
 }

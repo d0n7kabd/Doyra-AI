@@ -15,8 +15,8 @@ detected hits within phrases -- it does not do any sequence modeling.
 Usage:
     python scripts/analyze_phaseB_phrases.py [usul_audio_dir]
 
-Default usul_audio_dir: "C:/Users/E-MaxPCShop/Downloads/Telegram Desktop"
-(wherever the Usul_*_normal.m4a files happen to live locally).
+Default usul_audio_dir: data/usul_audio/ (relative to the repo root)
+Pass a directory to read the Usul_*_normal.m4a files from somewhere else.
 """
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 from doyra_ai.features import extract_features, features_to_vector  # noqa: E402
 from doyra_ai.paths import DEFAULT_MODEL_PATH  # noqa: E402
 
-DEFAULT_USUL_DIR = Path(r"C:\Users\E-MaxPCShop\Downloads\Telegram Desktop")
+DEFAULT_USUL_DIR = REPO_ROOT / "data" / "usul_audio"
 OUT_PATH = REPO_ROOT / "models" / "results" / "phaseB_generalization_check.json"
 
 

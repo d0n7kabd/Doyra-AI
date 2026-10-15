@@ -1,440 +1,300 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Doyra AI — Learning, Performing, and Documenting the Usul</title>
-<meta name="description" content="Doyra AI: a student research project teaching a machine to generate authentic Uzbek doyra rhythms, and a two-armed robot to perform them.">
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doyra AI — Teaching a Machine the Doira</title>
+<meta name="description" content="Doyra AI: a doira player's research into what a computer has to be told before it can follow the Uzbek frame drum.">
+<meta name="theme-color" content="#0a1430">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23c2562d'/%3E%3Ccircle cx='16' cy='16' r='11' fill='%23f1e4c8'/%3E%3Cpath d='M16 9l2 5 5 2-5 2-2 5-2-5-5-2 5-2z' fill='%23e0a93b'/%3E%3C/svg%3E">
 </head>
 <body>
 
-<!-- ============================== NAV ============================== -->
-<header class="site-nav" id="site-nav">
-  <div class="nav-inner">
-    <a class="nav-brand" href="#top">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 40 40" width="28" height="28">
-          <use href="#star-glyph"></use>
-        </svg>
-      </span>
-      <span class="brand-word">Doyra <em>AI</em></span>
-    </a>
+<a class="skip" href="#drum">Skip to content</a>
 
-    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
-
-    <nav class="nav-links" id="nav-links">
-      <a href="#overview">Overview</a>
-      <a href="#pipeline">How it Works</a>
-      <a href="#dataset">Dataset</a>
-      <a href="#model">Model</a>
-      <a href="#robot">Robot</a>
-      <a href="#paper">Paper</a>
-      <a href="#gallery">Gallery</a>
-      <a href="#about">About</a>
-    </nav>
-  </div>
+<header class="nav">
+  <a class="wordmark" href="#top" aria-label="Doyra AI, back to top">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><use href="#star8"/></svg>
+    <span>Doyra&nbsp;AI</span>
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="#drum">The drum</a>
+    <a href="#level-1">Levels</a>
+    <a href="#listen">Listen</a>
+  </nav>
+  <a class="btn btn-gold btn-sm" href="studio/index.html">Play with the AI</a>
 </header>
-
-<!-- Reusable SVG defs: 8-pointed star glyph used throughout as ornament -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <g id="star-glyph">
-      <path d="M20 2 L23.5 12.5 L34 9 L27 18 L38 20 L27 22 L34 31 L23.5 27.5 L20 38 L16.5 27.5 L6 31 L13 22 L2 20 L13 18 L6 9 L16.5 12.5 Z"/>
-    </g>
-  </defs>
-</svg>
 
 <main id="top">
 
   <!-- ============================== HERO ============================== -->
-  <section class="hero" id="hero">
-    <div class="tile-band tile-band--top" aria-hidden="true"></div>
-    <div class="hero-inner">
-      <div class="hero-copy">
-        <p class="eyebrow">Student research · AI + Robotics · Samarkand, Uzbekistan</p>
-        <h1 class="hero-title">The usul learns to&nbsp;keep&nbsp;itself.</h1>
-        <p class="hero-lede">
-          Doyra AI is a research project that listens to real doyra performances,
-          learns the rhythmic language of <em>usul</em> — deep center strikes,
-          sharp rim strikes, and fast rolls — and teaches a two-armed robot to
-          play it back with its own hands.
-        </p>
-        <div class="hero-ctas">
-          <a class="btn btn--gold" href="#paper">Read the paper</a>
-          <a class="btn btn--ghost" href="#pipeline">See how it works</a>
+  <section class="hero" aria-labelledby="hero-title">
+    <svg class="hero-lattice" aria-hidden="true"><rect width="100%" height="100%" fill="url(#lattice)"/></svg>
+
+    <div class="hero-copy">
+      <p class="eyebrow">Samarkand · Research project · 2026</p>
+      <h1 id="hero-title" class="hero-title">
+        <span class="line">Teaching</span>
+        <span class="line">a machine</span>
+        <span class="line">the <em>doira</em></span>
+      </h1>
+      <p class="hero-sub">What does a computer have to be told before it can follow the drum? A doira player's research, in three levels.</p>
+      <div class="hero-actions">
+        <a class="btn btn-gold" href="studio/index.html">Play with the AI <span aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#level-1">Read the three levels</a>
+      </div>
+    </div>
+
+    <div class="hero-drum" id="hero-drum">
+      <canvas id="drum-canvas" aria-hidden="true"></canvas>
+      <div class="drum-keys">
+        <button type="button" class="drum-key" data-stroke="bum_main">Play bum <kbd>B</kbd></button>
+        <button type="button" class="drum-key" data-stroke="bak_main">Play bak <kbd>K</kbd></button>
+      </div>
+      <p class="drum-hint" id="drum-hint"><span>Tap the skin:</span> bum. <span>Strike the rim:</span> bak.</p>
+      <p class="drum-readout" id="drum-readout" aria-live="polite"></p>
+    </div>
+
+    <div class="hero-scroll" aria-hidden="true"><span>scroll</span></div>
+  </section>
+
+  <!-- ============================== GIRIH INTERLUDE ============================== -->
+  <section class="girih-band" aria-label="Interlude">
+    <canvas class="girih" data-girih="band" aria-hidden="true"></canvas>
+    <p class="girih-words">
+      <span>Taught from notation.</span>
+      <span>Passed on <em>by ear.</em></span>
+    </p>
+  </section>
+
+  <!-- ============================== THE DRUM ============================== -->
+  <section class="drum-section paper" id="drum" aria-labelledby="drum-title">
+    <div class="drum-intro">
+      <div>
+        <p class="eyebrow eyebrow-dark">The instrument</p>
+        <h2 id="drum-title" class="h2">A frame drum<br>with rings inside</h2>
+        <p class="lede">The doira is the frame drum of Uzbek and Tajik music. It is taught from notation, but much of how it is played passes from teacher to student by ear.</p>
+      </div>
+
+      <!-- PHOTO SLOT 1 of 5: doira. Replace the .photo-slot__empty div with
+           <img src="assets/photos/doira.jpg" alt="The doira, front view"> -->
+      <figure class="photo-slot photo-slot--tall" data-photo="doira">
+        <div class="photo-slot__empty"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#star8"/></svg><span>Photo: the doira</span></div>
+        <figcaption>The doira</figcaption>
+      </figure>
+    </div>
+
+    <div class="strokes">
+      <div class="strokes-head">
+        <h3 class="h3">Nine strokes</h3>
+        <p>Chanted as <b class="syl syl-ta">ta</b> (main hand) and <b class="syl syl-ka">ka</b> (secondary hand). Bums have no syllable. Tap any stroke to hear a real recording.</p>
+      </div>
+      <ul class="stroke-grid" id="stroke-grid">
+        <!-- filled by script.js -->
+      </ul>
+    </div>
+
+    <div class="gesture-photos">
+      <!-- PHOTO SLOTS 2–5: bum, bak, kichik bak, noxun. Replace each .photo-slot__empty div with
+           <img src="assets/photos/<name>.jpg" alt="..."> -->
+      <figure class="photo-slot" data-photo="bum">
+        <div class="photo-slot__empty"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#star8"/></svg><span>Photo: bum</span></div>
+        <figcaption>bum</figcaption>
+      </figure>
+      <figure class="photo-slot" data-photo="bak">
+        <div class="photo-slot__empty"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#star8"/></svg><span>Photo: bak</span></div>
+        <figcaption>bak</figcaption>
+      </figure>
+      <figure class="photo-slot" data-photo="kichik-bak">
+        <div class="photo-slot__empty"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#star8"/></svg><span>Photo: kichik bak</span></div>
+        <figcaption>kichik bak</figcaption>
+      </figure>
+      <figure class="photo-slot" data-photo="noxun">
+        <div class="photo-slot__empty"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#star8"/></svg><span>Photo: noxun</span></div>
+        <figcaption>noxun</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================== OVERTURE ============================== -->
+  <section class="overture" aria-label="Three levels">
+    <p class="overture-line" data-reveal>
+      Three questions, in the order a listener answers them without thinking:
+      <span class="q q1">which stroke,</span>
+      <span class="q q2">where in the cycle,</span>
+      <span class="q q3">exactly when.</span>
+    </p>
+  </section>
+
+  <!-- ============================== LEVEL 1 ============================== -->
+  <section class="level level-1" id="level-1" data-scroll aria-labelledby="l1-title">
+    <div class="level-num" aria-hidden="true">1</div>
+    <div class="level-body">
+      <p class="eyebrow">Level 1</p>
+      <h2 id="l1-title" class="h2">Which stroke</h2>
+      <p class="lede">A classifier trained on 197 isolated strokes reached <b class="hl">95%</b> on held-out clips (91.7% in cross-validation), but only <b class="hl hl-clay">48%</b> on 164 strokes inside real phrases.</p>
+
+      <div class="dots-duo" data-reveal>
+        <figure class="dots-panel">
+          <div class="dots" id="dots-isolated"></div>
+          <figcaption><span class="big">95%</span> on held-out isolated strokes <small>shown per 100 clips</small></figcaption>
+        </figure>
+        <figure class="dots-panel">
+          <div class="dots dots-phrase" id="dots-phrase"></div>
+          <figcaption><span class="big clay">48%</span> on strokes inside real phrases <small>shown per 100 strokes</small></figcaption>
+        </figure>
+      </div>
+      <p class="aside">Alone, a stroke was easy to name. Inside a phrase, the same model needed something more.</p>
+    </div>
+  </section>
+
+  <!-- ============================== LEVEL 2 ============================== -->
+  <section class="level level-2" id="level-2" data-scroll aria-labelledby="l2-title">
+    <canvas class="girih girih-ghost" data-girih="ghost" aria-hidden="true"></canvas>
+    <div class="level-num" aria-hidden="true">2</div>
+    <div class="level-body">
+      <p class="eyebrow">Level 2</p>
+      <h2 id="l2-title" class="h2">Where in the cycle</h2>
+      <p class="lede">A doira rhythm is an <em>usul</em>: a cycle that comes back around. A model that ignored the usul cycle kept at most <b class="hl hl-clay">28%</b> of generated cycles intact. A cycle-aware generator kept <b class="hl">100%</b>.</p>
+
+      <div class="usul-stage">
+        <figure class="usul" id="usul">
+          <svg viewBox="-160 -160 320 320" class="usul-svg" role="img" aria-labelledby="usul-cap">
+            <circle class="usul-track" r="118"/>
+            <g id="usul-arcs"></g>
+            <g id="usul-dots"></g>
+            <text class="usul-center" id="usul-center" y="-4" text-anchor="middle">to'y</text>
+            <text class="usul-center-sub" id="usul-center-sub" y="20" text-anchor="middle">12 strokes</text>
+          </svg>
+          <figcaption id="usul-cap">The to'y cycle: kichik bum, kichik bak, kichik bak, four times round.</figcaption>
+          <button type="button" class="btn btn-ring" data-play-toy><span class="play-icon" aria-hidden="true"></span><span class="label">Play the to'y cycle</span></button>
+        </figure>
+
+        <div class="cycle-stats" data-reveal>
+          <div class="stat">
+            <p class="stat-label">Ignoring the cycle</p>
+            <div class="ticks" data-lit="28" data-tone="clay"></div>
+            <p class="stat-value"><span class="clay">at most 28%</span> of cycles intact</p>
+          </div>
+          <div class="stat">
+            <p class="stat-label">Cycle-aware generator</p>
+            <div class="ticks" data-lit="100" data-tone="turq"></div>
+            <p class="stat-value"><span class="turq">100%</span> of cycles intact</p>
+          </div>
+          <div class="stat">
+            <p class="stat-label">Naming the usul from audio</p>
+            <div class="ticks ticks-33" data-total="33" data-lit="11" data-tone="gold"></div>
+            <p class="stat-value"><span class="gold">11 of 33</span> cases identified</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== CTA (middle) ============================== -->
+  <section class="cta-band" aria-label="Try it">
+    <canvas class="girih" data-girih="cta" aria-hidden="true"></canvas>
+    <div class="cta-inner">
+      <p class="cta-kicker">Your turn</p>
+      <a class="btn btn-gold btn-xl" href="studio/index.html">Play with the AI <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <!-- ============================== LEVEL 3 ============================== -->
+  <section class="level level-3" id="level-3" data-scroll aria-labelledby="l3-title">
+    <div class="level-num" aria-hidden="true">3</div>
+    <div class="level-body">
+      <p class="eyebrow">Level 3</p>
+      <h2 id="l3-title" class="h2">Exactly when</h2>
+      <p class="lede">In the to'y rhythm (a wedding usul, played during the yor-yor), the two baks in each group are played about <b class="hl">30–40&nbsp;ms</b> closer together than the other strokes. The player doesn't feel it. It fades at slow tempos.</p>
+
+      <div class="timing" id="timing">
+        <div class="timing-controls">
+          <div class="seg" role="radiogroup" aria-label="Timing">
+            <button type="button" role="radio" aria-checked="true" data-mode="real">Real player</button>
+            <button type="button" role="radio" aria-checked="false" data-mode="even">Even (machine)</button>
+          </div>
+          <button type="button" class="btn btn-ring" data-play-toy><span class="play-icon" aria-hidden="true"></span><span class="label">Play the to'y cycle</span></button>
+        </div>
+        <svg class="timing-svg" id="timing-svg" viewBox="0 0 1200 300" role="img" aria-labelledby="timing-desc">
+          <desc id="timing-desc">Two groups of the to'y cycle on a time line. In real timing the two baks of each group sit closer together than the even grid.</desc>
+        </svg>
+        <p class="timing-note">Illustration at one tempo, using 35&nbsp;ms (the middle of the measured 30–40&nbsp;ms). Dashed lines are the even grid.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== LISTENING TEST ============================== -->
+  <section class="listen paper" id="listen" aria-labelledby="listen-title">
+    <div class="listen-grid">
+      <div>
+        <p class="eyebrow eyebrow-dark">Listening test</p>
+        <h2 id="listen-title" class="h2">Nobody hears it</h2>
+        <p class="lede">Three trained doira players could not tell measured timing from even timing. My teacher, guessing clip by clip, got <b>2 of 9</b>.</p>
+        <div class="nine" aria-label="2 of 9 correct">
+          <span class="on"></span><span></span><span></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span>
         </div>
       </div>
 
-      <div class="hero-visual" aria-hidden="true">
-        <!-- ================= SIGNATURE ELEMENT ================= -->
-        <!-- Animated top-down doyra: rotating star ring + irregular
-             dum-tak-tak heartbeat pulse driven by script.js -->
-        <svg id="doyra-svg" viewBox="0 0 400 400" role="img" aria-label="Animated illustration of a doyra drum">
-          <defs>
-            <radialGradient id="membraneGrad" cx="50%" cy="45%" r="65%">
-              <stop offset="0%" stop-color="#f4e9cf"/>
-              <stop offset="70%" stop-color="#e7d6ab"/>
-              <stop offset="100%" stop-color="#d3bd85"/>
-            </radialGradient>
-            <linearGradient id="rimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#8a4224"/>
-              <stop offset="50%" stop-color="#5c2a15"/>
-              <stop offset="100%" stop-color="#3c1a0c"/>
-            </linearGradient>
-            <radialGradient id="pulseGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#d4af37" stop-opacity="0.95"/>
-              <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-
-          <!-- outer wood rim -->
-          <circle cx="200" cy="200" r="192" fill="url(#rimGrad)"/>
-          <circle cx="200" cy="200" r="192" fill="none" stroke="#2a1208" stroke-width="2"/>
-
-          <!-- rotating ornament ring (8-pointed star tiles) -->
-          <g id="ornament-ring" transform-origin="200 200">
-            <circle cx="200" cy="200" r="168" fill="none" stroke="#1f9e9e" stroke-width="14" opacity="0.9"/>
-            <circle cx="200" cy="200" r="168" fill="none" stroke="#d4af37" stroke-width="2" opacity="0.8"/>
-            <g fill="#0f2b3a" opacity="0.85">
-              <!-- 16 small stars distributed around the ring, generated by hand-placed rotations -->
-              <g id="ring-stars"></g>
-            </g>
-          </g>
-
-          <!-- parchment membrane -->
-          <circle cx="200" cy="200" r="148" fill="url(#membraneGrad)" stroke="#b99a5e" stroke-width="2"/>
-          <!-- lacing suggestion -->
-          <g stroke="#b99a5e" stroke-width="1.5" opacity="0.55">
-            <circle cx="200" cy="200" r="148" fill="none" stroke-dasharray="2 10"/>
-            <circle cx="200" cy="200" r="132" fill="none" stroke-dasharray="1 8"/>
-          </g>
-
-          <!-- ripple layer: JS appends/animates circles here on strong beats -->
-          <g id="ripple-layer"></g>
-
-          <!-- center strike zone ("dum") -->
-          <circle id="pulse-glow" cx="200" cy="200" r="60" fill="url(#pulseGrad)"/>
-          <circle id="pulse-core" cx="200" cy="200" r="30" fill="#241005" opacity="0.88"/>
-          <circle cx="200" cy="200" r="30" fill="none" stroke="#d4af37" stroke-width="1.5" opacity="0.6"/>
-        </svg>
-        <p class="hero-visual-caption">listening for <span id="beat-label">dum</span></p>
-      </div>
-    </div>
-    <div class="tile-band tile-band--bottom" aria-hidden="true"></div>
-  </section>
-
-  <!-- ============================== OVERVIEW ============================== -->
-  <section class="section" id="overview">
-    <p class="section-eyebrow">01 — Overview</p>
-    <h2 class="section-title">Three parts, one instrument.</h2>
-    <div class="overview-grid">
-      <article class="overview-card">
-        <svg class="card-star" viewBox="0 0 40 40" width="32" height="32"><use href="#star-glyph"></use></svg>
-        <h3>Learn the rhythm</h3>
-        <p>A model trained on recordings of real doyra performances learns to
-          generate authentic <em>usul</em> patterns — the traditional rhythmic
-          cycles built from dum, tak, and roll.</p>
-      </article>
-      <article class="overview-card">
-        <svg class="card-star" viewBox="0 0 40 40" width="32" height="32"><use href="#star-glyph"></use></svg>
-        <h3>Give it hands</h3>
-        <p>A two-armed robot performs what the model generates: one arm holds
-          and angles the drum, the other strikes it with solenoid-driven
-          fingers.</p>
-      </article>
-      <article class="overview-card">
-        <svg class="card-star" viewBox="0 0 40 40" width="32" height="32"><use href="#star-glyph"></use></svg>
-        <h3>Write it down</h3>
-        <p>A short research paper documents the dataset, the model, the
-          hardware, and an evaluation by real doyra teachers.</p>
-      </article>
-    </div>
-  </section>
-
-  <!-- ============================== PIPELINE ============================== -->
-  <section class="section section--dark" id="pipeline">
-    <p class="section-eyebrow section-eyebrow--light">02 — How it works</p>
-    <h2 class="section-title section-title--light">Data → Model → Hardware → Feedback</h2>
-    <p class="section-lede section-lede--light">
-      The pipeline is a loop, not a line: what the robot plays for teachers
-      is judged, and that judgement becomes new data.
-    </p>
-
-    <div class="pipeline" role="list">
-      <div class="pipeline-step" role="listitem">
-        <div class="pipeline-node">01</div>
-        <h3>Data</h3>
-        <p>Field recordings of doyra performances, hand-labeled by strike
-          type (dum / tak / roll) and usul pattern.</p>
-      </div>
-      <div class="pipeline-arrow" aria-hidden="true">→</div>
-      <div class="pipeline-step" role="listitem">
-        <div class="pipeline-node">02</div>
-        <h3>Model</h3>
-        <p>A sequence model learns the grammar of usul and generates new,
-          stylistically consistent rhythmic patterns.</p>
-      </div>
-      <div class="pipeline-arrow" aria-hidden="true">→</div>
-      <div class="pipeline-step" role="listitem">
-        <div class="pipeline-node">03</div>
-        <h3>Hardware</h3>
-        <p>A two-armed robot translates generated patterns into physical
-          strikes on a real doyra.</p>
-      </div>
-      <div class="pipeline-arrow" aria-hidden="true">→</div>
-      <div class="pipeline-step" role="listitem">
-        <div class="pipeline-node">04</div>
-        <h3>Feedback</h3>
-        <p>Doyra teachers rate authenticity and timing; ratings and
-          corrections flow back into the dataset.</p>
-      </div>
-    </div>
-    <div class="pipeline-loop" aria-hidden="true">
-      <svg viewBox="0 0 1000 90" preserveAspectRatio="none">
-        <path d="M 940 10 C 700 90, 300 90, 60 10" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="6 8"/>
-        <polygon points="60,10 78,4 74,20" fill="#d4af37"/>
-      </svg>
-      <span class="pipeline-loop-label">feedback loops back into the dataset</span>
-    </div>
-  </section>
-
-  <!-- ============================== DATASET ============================== -->
-  <section class="section" id="dataset">
-    <p class="section-eyebrow">03 — Dataset</p>
-    <h2 class="section-title">What the model listens to.</h2>
-
-    <div class="stat-grid">
-      <div class="stat-card">
-        <span class="stat-num">9</span>
-        <span class="stat-label">recordings</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-num">N/A — Phase A</span>
-        <span class="stat-label">distinct usul patterns</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-num">0.05</span>
-        <span class="stat-label">hours of audio</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-num">1</span>
-        <span class="stat-label">performer contributors</span>
-      </div>
-    </div>
-
-    <div class="placeholder placeholder--tall">
-      <span class="placeholder-label">Waveform / spectrogram of a sample recording</span>
-      <!-- CONTENT TODO: drop in a real waveform or spectrogram image/SVG here -->
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <caption>Sample rows from the recording log</caption>
-        <thead>
-          <tr>
-            <th>Recording ID</th>
-            <th>Usul</th>
-            <th>Performer / region</th>
-            <th>Duration</th>
-            <th>Tempo (BPM)</th>
-            <th>Labels available</th>
-          </tr>
-        </thead>
-        <tbody id="datasetTableBody">
-          <tr><td>bak_main_07</td><td>N/A — Phase A</td><td>Right-handed (single performer)</td><td>0.83s</td><td>N/A — Phase A</td><td>note, hand_role</td></tr>
-          <tr><td>bum_secondary_14</td><td>N/A — Phase A</td><td>Right-handed (single performer)</td><td>0.83s</td><td>N/A — Phase A</td><td>note, hand_role</td></tr>
-          <tr><td>kichik_bak_secondary_03</td><td>N/A — Phase A</td><td>Right-handed (single performer)</td><td>0.83s</td><td>N/A — Phase A</td><td>note, hand_role</td></tr>
-          <tr><td>noxun_secondary_09</td><td>N/A — Phase A</td><td>Right-handed (single performer)</td><td>0.83s</td><td>N/A — Phase A</td><td>note, hand_role</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ============================== MODEL & RESULTS ============================== -->
-  <section class="section section--tint" id="model">
-    <p class="section-eyebrow">04 — Model &amp; Results</p>
-    <h2 class="section-title">What it learned.</h2>
-
-    <div class="placeholder">
-      <span class="placeholder-label">Architecture explanation</span>
-      <p class="placeholder-sub">CONTENT TODO — describe the model architecture, input representation (e.g. strike-event sequences), training objective, and any conditioning (usul type, tempo, performer style).</p>
-    </div>
-
-    <div class="chart-grid">
-      <figure class="stat-card">
-        <span class="placeholder-label">Cross-validation accuracy by model</span>
-        <svg viewBox="0 0 300 210" width="100%" role="img" aria-label="Bar chart: 5-fold cross-validation accuracy — logistic regression 91.1%, SVM RBF 91.1%, random forest 91.7%, kNN 87.9%">
-          <line x1="20" y1="170" x2="290" y2="170" stroke="#c9bd9a" stroke-width="1"/>
-          <line x1="20" y1="30" x2="290" y2="30" stroke="#c9bd9a" stroke-width="1" stroke-dasharray="2 4"/>
-          <text x="14" y="174" font-family="IBM Plex Mono, monospace" font-size="9" fill="#7a725c" text-anchor="end">0%</text>
-          <text x="14" y="34" font-family="IBM Plex Mono, monospace" font-size="9" fill="#7a725c" text-anchor="end">100%</text>
-
-          <rect x="35" y="42.5" width="40" height="127.5" fill="#1f9e9e"/>
-          <text x="55" y="35" font-family="IBM Plex Mono, monospace" font-size="10" fill="#17223d" text-anchor="middle">91.1%</text>
-          <text x="55" y="185" font-family="Manrope, sans-serif" font-size="9" fill="#3a5d5b" text-anchor="middle">logreg</text>
-
-          <rect x="95" y="42.5" width="40" height="127.5" fill="#1f9e9e"/>
-          <text x="115" y="35" font-family="IBM Plex Mono, monospace" font-size="10" fill="#17223d" text-anchor="middle">91.1%</text>
-          <text x="115" y="185" font-family="Manrope, sans-serif" font-size="9" fill="#3a5d5b" text-anchor="middle">SVM (RBF)</text>
-
-          <rect x="155" y="41.6" width="40" height="128.4" fill="#d4af37"/>
-          <text x="175" y="34" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700" fill="#17223d" text-anchor="middle">91.7%</text>
-          <text x="175" y="185" font-family="Manrope, sans-serif" font-size="9" font-weight="700" fill="#17223d" text-anchor="middle">random forest ★</text>
-
-          <rect x="215" y="47.0" width="40" height="123.0" fill="#1f9e9e"/>
-          <text x="235" y="40" font-family="IBM Plex Mono, monospace" font-size="10" fill="#17223d" text-anchor="middle">87.9%</text>
-          <text x="235" y="185" font-family="Manrope, sans-serif" font-size="9" fill="#3a5d5b" text-anchor="middle">kNN</text>
-        </svg>
-        <figcaption class="stat-label" style="margin-top:0.6rem;">5-fold stratified CV on the training split (n=157) · random forest wins</figcaption>
-      </figure>
-      <figure class="stat-card">
-        <span class="placeholder-label">Confusion matrix — held-out test set</span>
-        <img src="assets/confusion_matrix.png" alt="Confusion matrix for the random forest classifier across all 9 note/hand-role classes" style="max-width:100%; height:auto; border-radius: var(--radius-sm); margin-top:0.6rem;">
-        <figcaption class="stat-label" style="margin-top:0.6rem;">95% accuracy on 40 held-out clips · confusions cluster on bak↔bum and kichik_bak↔kichik_bum, not randomly</figcaption>
-      </figure>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <caption>Baseline vs. model — Phase A note classifier</caption>
-        <thead>
-          <tr>
-            <th>Metric</th>
-            <th>Baseline</th>
-            <th>Doyra AI model</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Classification accuracy (5-fold CV)</td><td>11.1% (chance, 9 classes)</td><td>91.7% (random forest)</td></tr>
-          <tr><td>Held-out test accuracy</td><td>12.7% (majority-class guess)</td><td>95.0% (40 held-out clips)</td></tr>
-          <tr><td>Best model (of 4 compared)</td><td>—</td><td>Random forest — vs. logreg 91.1%, SVM (RBF) 91.1%, kNN 87.9%</td></tr>
-          <tr><td>Confusion pattern</td><td>—</td><td>Sensible, not random: bak_main ↔ bum_main, kichik_bak ↔ kichik_bum (physically similar strokes)</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ============================== ROBOT ============================== -->
-  <section class="section" id="robot">
-    <p class="section-eyebrow">05 — Robot</p>
-    <h2 class="section-title">Giving the rhythm hands.</h2>
-    <p class="section-lede">
-      One arm holds and angles the doyra by its rim; the other strikes it
-      with solenoid-driven fingers tipped in silicone, translating each
-      generated dum, tak, and roll into a physical motion.
-    </p>
-
-    <div class="placeholder placeholder--video">
-      <span class="placeholder-label">Robot performance video</span>
-      <!-- CONTENT TODO: embed real video here, e.g. <video controls src="..."></video> -->
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <caption>Hardware specification</caption>
-        <thead>
-          <tr>
-            <th>Component</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Controller</td><td>ESP32</td></tr>
-          <tr><td>Striking arm</td><td>4–5 solenoid-driven striking fingers with silicone tips</td></tr>
-          <tr><td>Support arm</td><td>Servo-driven support arm with rim clamp</td></tr>
-          <tr><td>Structure</td><td>3D-printed PETG joints with an aluminum frame</td></tr>
-          <!-- CONTENT TODO: add rows for power supply, sensors, firmware/timing details, etc. as the build is finalized -->
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ============================== PAPER ============================== -->
-  <section class="section section--tint" id="paper">
-    <p class="section-eyebrow">06 — Paper</p>
-    <!-- CONTENT TODO: confirm final paper title -->
-    <h2 class="section-title">Doyra AI: Learning and Performing Traditional Uzbek Frame-Drum Rhythms</h2>
-
-    <div class="placeholder">
-      <span class="placeholder-label">Abstract</span>
-      <p class="placeholder-sub">CONTENT TODO — paste the final abstract here (dataset summary, method, hardware, evaluation, and headline finding).</p>
-    </div>
-
-    <div class="placeholder placeholder--tall">
-      <span class="placeholder-label">PDF embed</span>
-      <!-- CONTENT TODO: replace with e.g. <embed src="paper.pdf" type="application/pdf" width="100%" height="600"> -->
-    </div>
-
-    <div class="bibtex-block">
-      <span class="placeholder-label">BibTeX citation</span>
-      <pre><code>@misc{doyra_ai_—,
-  title  = {Doyra AI: Learning and Performing Traditional Uzbek Frame-Drum Rhythms},
-  author = {— },
-  year   = {—},
-  note   = {— venue / preprint link —}
-}</code></pre>
-      <!-- CONTENT TODO: fill in author, year, and venue once finalized -->
-    </div>
-  </section>
-
-  <!-- ============================== GALLERY ============================== -->
-  <section class="section" id="gallery">
-    <p class="section-eyebrow">07 — Gallery</p>
-    <h2 class="section-title">Process &amp; build.</h2>
-    <div class="gallery-grid">
-      <!-- CONTENT TODO: replace each tile below with a real photo or video -->
-      <div class="placeholder placeholder--square"><span class="placeholder-label">Photo / video</span></div>
-      <div class="placeholder placeholder--square"><span class="placeholder-label">Photo / video</span></div>
-      <div class="placeholder placeholder--square"><span class="placeholder-label">Photo / video</span></div>
-      <div class="placeholder placeholder--square"><span class="placeholder-label">Photo / video</span></div>
-      <div class="placeholder placeholder--square"><span class="placeholder-label">Photo / video</span></div>
-      <div class="placeholder placeholder--square"><span class="placeholder-label">Photo / video</span></div>
-    </div>
-  </section>
-
-  <!-- ============================== ABOUT ============================== -->
-  <section class="section section--tint" id="about">
-    <p class="section-eyebrow">08 — About</p>
-    <h2 class="section-title">The maker.</h2>
-    <div class="about-grid">
-      <div class="placeholder placeholder--portrait">
-        <span class="placeholder-label">Portrait photo</span>
-      </div>
-      <div class="about-copy">
-        <p class="placeholder-sub">CONTENT TODO — short bio: high school student in Samarkand, Uzbekistan, who has played doyra since childhood; what led to this project; relevant background in music, engineering, or ML.</p>
-        <h3>Acknowledgments</h3>
-        <p class="placeholder-sub">CONTENT TODO — thank doyra teachers, mentors, schools, or programs that supported the project.</p>
+      <div class="game" id="game">
+        <p class="game-title">Can you?</p>
+        <p class="game-text" id="game-text">Play a clip of two to'y cycles. Then guess: real player, or even machine timing?</p>
+        <button type="button" class="btn btn-ink" id="game-play"><span class="play-icon" aria-hidden="true"></span><span class="label">Play a clip</span></button>
+        <div class="game-guess" id="game-guess" hidden>
+          <button type="button" class="btn btn-ghost-dark" data-guess="real">Real player</button>
+          <button type="button" class="btn btn-ghost-dark" data-guess="even">Even</button>
+        </div>
+        <p class="game-score" id="game-score" aria-live="polite"></p>
       </div>
     </div>
   </section>
 
+  <!-- ============================== CORE IDEA ============================== -->
+  <section class="core" aria-labelledby="core-title">
+    <canvas id="rain" aria-hidden="true"></canvas>
+    <div class="core-inner">
+      <p class="eyebrow">The idea of the paper</p>
+      <h2 id="core-title" class="core-text" data-reveal>
+        At each level, the computer had to be given something a doira player knows <em>without being told.</em>
+      </h2>
+    </div>
+  </section>
+
+  <!-- ============================== END ============================== -->
+  <section class="finale" aria-labelledby="finale-title">
+    <svg class="finale-star" viewBox="0 0 32 32" aria-hidden="true"><use href="#star8"/></svg>
+    <h2 id="finale-title" class="finale-title">Now play<br>with it.</h2>
+    <a class="btn btn-gold btn-xl" href="studio/index.html">Play with the AI <span aria-hidden="true">→</span></a>
+
+    <div class="credit">
+      <p>Made by <b>Doniyor Abdusalimov</b>, doira player from Samarkand, Uzbekistan.</p>
+      <p>Code and data behind the paper <cite>Teaching a Machine the Doira</cite> (2026).</p>
+      <p><a class="link" href="https://github.com/d0n7kabd/Doyra-AI">Source on GitHub ↗</a></p>
+    </div>
+  </section>
 </main>
 
-<!-- ============================== FOOTER ============================== -->
-<footer class="site-footer">
-  <div class="tile-band tile-band--top" aria-hidden="true"></div>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <svg viewBox="0 0 40 40" width="22" height="22" aria-hidden="true"><use href="#star-glyph"></use></svg>
-      <span>Doyra AI</span>
-    </div>
-    <!-- CONTENT TODO: replace footer links with real contact info -->
-    <div class="footer-links">
-      <a href="#">email@example.com</a>
-      <a href="#">GitHub</a>
-      <a href="#">Research paper</a>
-    </div>
-    <p class="footer-note">A student research project · Samarkand, Uzbekistan</p>
-  </div>
-</footer>
+<!-- ambient drum, always alive -->
+<button type="button" class="ambient" id="ambient" aria-label="Play the to'y cycle" aria-pressed="false">
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+</button>
+
+<!-- shared SVG defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="star8" viewBox="0 0 32 32">
+      <path d="M16 1.5l3.4 6.3 6.9-2.1-2.1 6.9 6.3 3.4-6.3 3.4 2.1 6.9-6.9-2.1-3.4 6.3-3.4-6.3-6.9 2.1 2.1-6.9L1.5 16l6.3-3.4-2.1-6.9 6.9 2.1z" fill="currentColor"/>
+      <circle cx="16" cy="16" r="4" fill="var(--star-core, #0a1430)"/>
+    </symbol>
+    <pattern id="lattice" width="96" height="96" patternUnits="userSpaceOnUse">
+      <path d="M48 8l9.9 23.9L82 42 58 52.1 48 76 38.1 52.1 14 42l23.9-10.1zM0 48h14M82 48h14M48 0v8M48 76v20" fill="none" stroke="currentColor" stroke-width="1"/>
+    </pattern>
+  </defs>
+</svg>
 
 <script src="script.js"></script>
 </body>
