@@ -29,7 +29,9 @@ export class Transport {
     this.listeners = new Set();
   }
 
-  setSong(buffer) { this.stop(); this.song = buffer; this.pos = 0; }
+  // buffer may be null (doira only, e.g. the song's audio isn't on this computer);
+  // then `duration` gives the song's length.
+  setSong(buffer, duration) { this.stop(); this.song = buffer; this.length = buffer ? buffer.duration : duration || 0; this.pos = 0; }
   setPattern(fn) { this.pattern = fn; }
   setMix({ song, doira }) {
     const t = this.ctx.currentTime;
@@ -38,9 +40,9 @@ export class Transport {
   }
   onStroke(fn) { this.listeners.add(fn); return () => this.listeners.delete(fn); }
 
-  get duration() { return this.song ? this.song.duration : 0; }
+  get duration() { return this.length || 0; }
   get position() {
-    return this.playing ? this.startSong + (this.ctx.currentTime - this.startCtx) : this.pos;
+    return this.playing ? this.startSong + Math.max(0, this.ctx.currentTime - this.startCtx) : this.pos;
   }
   toCtx(t) { return this.startCtx + (t - this.startSong); }
 
@@ -94,6 +96,7 @@ export class Transport {
   tick() {
     if (!this.playing) return;
     const now = this.position;
+    if (!this.song && now >= this.duration) { this.stop(); return; }
     while (this.visual.length && this.visual[0].time <= now) {
       const ev = this.visual.shift();
       this.listeners.forEach((fn) => fn(ev));

@@ -52,15 +52,26 @@ function esc(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+// Library songs come with their analysis (tools/library/add_song.py), so they
+// start at once. If the song's audio isn't on this computer (song files stay on
+// the author's laptop, e.g. on the public website), the doira plays alone on
+// the song's analysed beat.
 async function openLibrarySong(s) {
   audioContext(); // inside the tap, so audio may start
   showPlayer(s.title, s.artist);
+  drum.busy = true;
   try {
-    const r = await fetch(`library/${s.original}`);
-    if (!r.ok) throw new Error('missing');
-    await openSong({ id: s.id, title: s.title, artist: s.artist }, await r.arrayBuffer());
+    const info = await (await fetch(`library/${s.id}.json`)).json();
+    let audio = null;
+    try {
+      const r = await fetch(`library/${info.files.original}`);
+      if (r.ok) audio = await r.arrayBuffer();
+    } catch (e) { /* not on this computer */ }
+    await startSong({ id: s.id, title: s.title, artist: s.artist, files: info.files },
+      audio ? await decode(audio) : null, info.analysis);
   } catch (e) {
-    fail("This song's audio isn't on this computer. Song files stay on the author's laptop; choose your own file instead.");
+    console.error(e);
+    fail("This song couldn't be opened.");
   }
 }
 
@@ -68,8 +79,17 @@ async function openFile(file) {
   audioContext();
   const title = file.name.replace(/\.[^.]+$/, '');
   showPlayer(title, 'your file');
+  drum.busy = true;
   try {
-    await openSong({ id: `file:${file.name}:${file.size}`, title, artist: 'your file' }, await file.arrayBuffer());
+    const id = `file:${file.name}:${file.size}`;
+    const buffer = await decode(await file.arrayBuffer());
+    $('subtitle').textContent = 'Listening to the song…';
+    let an = analyses.get(id);
+    if (!an) {
+      an = await analyze(await toAnalysisPCM(buffer));
+      analyses.set(id, an);
+    }
+    await startSong({ id, title, artist: 'your file' }, buffer, an);
   } catch (e) {
     console.error(e);
     fail("This file couldn't be read as audio. Try an mp3, m4a or wav.");
@@ -78,28 +98,31 @@ async function openFile(file) {
 
 // ---------------------------------------------------------------- song
 
-async function openSong(meta, arrayBuffer) {
+async function startSong(meta, buffer, analysis) {
   stopSong();
-  drum.busy = true;
-  $('subtitle').textContent = 'Listening to the song…';
-  const buffer = await decode(arrayBuffer);
-  let an = analyses.get(meta.id);
-  if (!an) {
-    [an] = await Promise.all([analyze(await toAnalysisPCM(buffer)), ensureBank()]);
-    analyses.set(meta.id, an);
-  }
   await ensureBank();
   drum.busy = false;
-  state.song = { ...meta, buffer, analysis: an };
+  state.song = { ...meta, buffer, analysis };
   const t = new Transport({ bank: state.bank });
-  t.setSong(buffer);
+  t.setSong(buffer, analysis.duration);
   t.onStroke(onStroke);
   state.transport = t;
+  // without the song's audio only "Doira only" is possible
+  const both = document.querySelector('[data-mix="both"]');
+  both.disabled = !buffer;
+  if (!buffer) setPressed('[data-group="mix"]', '[data-mix="doira"]');
+  $('msg').textContent = buffer ? '' : "The song itself stays on the author's laptop. Here the doira plays alone, on the song's beat.";
+  $('msg').hidden = !!buffer;
   applyMix();
   applyRhythm();
   $('player').hidden = false;
   t.play(0);
   syncPP();
+}
+
+function setPressed(groupSel, btnSel) {
+  const g = document.querySelector(groupSel), b = document.querySelector(btnSel);
+  g.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
 }
 
 async function ensureBank() {
@@ -135,6 +158,7 @@ $('back').addEventListener('click', () => {
   stopSong();
   closeSheet();
   $('player').hidden = true;
+  $('msg').hidden = true;
   $('songs').hidden = false;
   $('title').textContent = 'Pick a song';
   $('subtitle').textContent = 'or tap the drum';
@@ -189,7 +213,16 @@ function renderFacts() {
     ['Cycle', u.seq.split('').join(' ')],
     ['Strokes', `${state.bank.label}, recorded`],
   ];
-  $('facts').innerHTML = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+  let html = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+  // the to'y renders made by add_song.py
+  const f = s.files;
+  if (f) {
+    const links = [];
+    if (s.buffer) links.push([`library/${f.merged}`, "Song + doira (to'y)"], [`library/${f.doira}`, "Doira only (to'y)"]);
+    else links.push([`library/${f.doiraPublic}`, "Doira only (to'y)"]);
+    html += `<dt>Download</dt><dd>${links.map(([href, label]) => `<a class="dl" href="${esc(href)}" download>${esc(label)}</a>`).join('<br>')}</dd>`;
+  }
+  $('facts').innerHTML = html;
 }
 
 // ---------------------------------------------------------------- playback

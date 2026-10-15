@@ -4,7 +4,9 @@
       "id": "despacito",
       "title": "Despacito",
       "artist": "Luis Fonsi",
-      "original": "audio/despacito_original.mp3"
+      "duration": 228.9371,
+      "bpm": 89.21,
+      "source": "Despasito   Daddy Yanke feat Luis Fonsi feat Justin Bieber.mp3"
     }
   ]
 }
