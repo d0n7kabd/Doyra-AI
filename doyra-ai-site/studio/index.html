@@ -1,21 +1,77 @@
 <!doctype html>
-<!-- PLACEHOLDER: replace this file with doyra-studio/index.html (plus strokes.js and demos.js). -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Doyra Studio</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&family=Newsreader:ital@0;1&display=swap">
-<style>
-  body { margin: 0; min-height: 100svh; display: grid; place-content: center; gap: 18px; padding: 24px;
-         background: #0a1430; color: #f1e4c8; font-family: Newsreader, Georgia, serif; font-size: 20px; text-align: left; }
-  h1 { font-family: Unbounded, sans-serif; font-weight: 800; font-size: clamp(36px, 8vw, 72px); margin: 0; line-height: 1; }
-  a { color: #f2cf7c; }
-</style>
+<title>Doyra Studio — play with the AI</title>
+<meta name="description" content="Play any song with a doira: real recorded strokes in the Uzbek usuls, placed on the song's beat.">
+<meta name="theme-color" content="#0a1430">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/studio.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23e0a93b'/%3E%3Ccircle cx='16' cy='16' r='11' fill='%23f1e4c8'/%3E%3C/svg%3E">
 </head>
 <body>
-  <h1>Doyra Studio</h1>
-  <p><em>The studio is being tuned. Check back soon.</em></p>
-  <p><a href="../index.html">← Back to Doyra AI</a></p>
+
+<header class="bar">
+  <a class="brand" href="../index.html">Doyra AI</a>
+</header>
+
+<main class="view">
+  <div class="drum-box"><canvas id="drum" aria-label="The doira. Tap the skin for bum, the rim for bak."></canvas></div>
+
+  <div class="now" aria-live="polite">
+    <h1 id="title">Pick a song</h1>
+    <p id="subtitle">or tap the drum</p>
+  </div>
+
+  <p class="msg" id="msg" hidden></p>
+
+  <div class="songs" id="songs">
+    <!-- filled from library/index.json -->
+  </div>
+
+  <section id="player" hidden>
+    <div class="transport">
+      <button class="pp" id="pp" aria-pressed="false" aria-label="Play"></button>
+      <div class="scrub" id="scrub" role="slider" aria-label="Song position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><i id="scrub-fill"></i></div>
+      <span class="time" id="time">0:00</span>
+    </div>
+
+    <div class="controls">
+      <div class="seg" data-group="mix" role="group" aria-label="Mix">
+        <button aria-pressed="true" data-mix="both">Song + doira</button>
+        <button aria-pressed="false" data-mix="doira">Doira only</button>
+      </div>
+      <p class="ctl-label">Rhythm</p>
+      <div class="seg" data-group="usul" role="group" aria-label="Rhythm">
+        <button aria-pressed="true" data-usul="auto">Auto</button>
+        <button aria-pressed="false" data-usul="toy">To'y</button>
+        <button aria-pressed="false" data-usul="u1">1</button>
+        <button aria-pressed="false" data-usul="u3">3</button>
+        <button aria-pressed="false" data-usul="u4">4</button>
+        <button aria-pressed="false" data-usul="u5">5</button>
+        <button aria-pressed="false" data-usul="u6">6</button>
+      </div>
+      <div class="seg small" data-group="fit" role="group" aria-label="How the cycle meets the bar" hidden>
+        <button aria-pressed="true" data-fit="fit">Fit to the bar</button>
+        <button aria-pressed="false" data-fit="free">Free</button>
+      </div>
+      <div class="row-bottom">
+        <button class="back" id="back">← Songs</button>
+        <button class="more-btn" id="more">More</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<aside class="sheet" id="sheet" aria-label="More about this song">
+  <button class="close" id="close">Close</button>
+  <h2>More</h2>
+  <dl id="facts"></dl>
+</aside>
+
+<script type="module" src="js/app.js"></script>
 </body>
 </html>

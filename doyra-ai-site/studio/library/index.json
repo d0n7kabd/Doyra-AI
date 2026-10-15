@@ -1,0 +1,10 @@
+{
+  "songs": [
+    {
+      "id": "despacito",
+      "title": "Despacito",
+      "artist": "Luis Fonsi",
+      "original": "audio/despacito_original.mp3"
+    }
+  ]
+}
