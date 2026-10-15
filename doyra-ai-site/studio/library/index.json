@@ -7,6 +7,70 @@
       "duration": 228.9371,
       "bpm": 89.21,
       "source": "Despasito   Daddy Yanke feat Luis Fonsi feat Justin Bieber.mp3"
+    },
+    {
+      "id": "dont-be-so-shy",
+      "title": "Don't Be So Shy (Filatov & Karas Remix)",
+      "artist": "Imany",
+      "duration": 217.909,
+      "bpm": 108,
+      "source": "imany_-_Imany_Don_t_be_so_shy_Filatov_Karas_Remix_Slow_-10_(mp3.pm).mp3"
+    },
+    {
+      "id": "gasolina",
+      "title": "Gasolina",
+      "artist": "Daddy Yankee",
+      "duration": 192.6197,
+      "bpm": 96,
+      "source": "Daddy_Yankee_-_Gasolina_ScaryBeatz.com.mp3"
+    },
+    {
+      "id": "hips-dont-lie",
+      "title": "Hips Don't Lie",
+      "artist": "Shakira feat. Wyclef Jean",
+      "duration": 218.1105,
+      "bpm": 100,
+      "source": "Shakira, Wyclef Jean - Hips Don't Lie (feat. Wyclef Jean).mp3"
+    },
+    {
+      "id": "levitating",
+      "title": "Levitating",
+      "artist": "Dua Lipa feat. DaBaby",
+      "duration": 203.0642,
+      "bpm": 103,
+      "source": "Dua Lipa feat. DaBaby - Levitating.mp3"
+    },
+    {
+      "id": "lose-control",
+      "title": "Lose Control (Gemellini Remix)",
+      "artist": "Meduza",
+      "duration": 360.9611,
+      "bpm": 125.08,
+      "source": "Meduza_-_Lose_Control_Gemellini_Remix_(mp3.pm).mp3"
+    },
+    {
+      "id": "say-my-name",
+      "title": "Say My Name",
+      "artist": "David Guetta feat. Bebe Rexha & J Balvin",
+      "duration": 198.9467,
+      "bpm": 95,
+      "source": "David Guetta feat. Bebe Rexha & J Balvin - Say My Name.mp3"
+    },
+    {
+      "id": "shape-of-you",
+      "title": "Shape of You",
+      "artist": "Ed Sheeran",
+      "duration": 236.1731,
+      "bpm": 96.01,
+      "source": "Edd_Sheeran_-_Shape_Of_You_(mp3.pm).mp3"
+    },
+    {
+      "id": "simarik",
+      "title": "Şımarık",
+      "artist": "Tarkan",
+      "duration": 191.138,
+      "bpm": 97.04,
+      "source": "Таркан - Simarik.mp3"
     }
   ]
 }

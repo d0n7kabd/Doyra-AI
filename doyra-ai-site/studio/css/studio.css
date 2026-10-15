@@ -48,7 +48,14 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .time { flex: none; font: 500 13px var(--f-d); opacity: .7; min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
 
 /* song row */
-.songs { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+/* one row of cards; scrolls sideways inside itself when there are many */
+.songs {
+  display: flex; gap: 14px; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity; padding: 4px 2px 14px; margin: 0 -2px;
+  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+}
+.songs > * { flex: 0 0 auto; scroll-snap-align: start; }
+.songs::after { content: ""; flex: 0 0 1px; }
 .card {
   width: 168px; padding: 16px; border-radius: 18px; text-align: left;
   border: 1.5px solid var(--line);
@@ -91,7 +98,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 @media (max-width: 560px) {
   body { font-size: 18px; }
-  .card { width: calc(50% - 7px); }
+  .card { width: 150px; }
   .seg { gap: 5px; }
   .seg button { padding: 10px 11px; font-size: 14px; }
 }
@@ -100,3 +107,5 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .seg button:disabled { opacity: .35; cursor: default; }
 .sheet a.dl { color: var(--gold); }
+.style-pick { justify-content: flex-start; margin-top: 10px; }
+.link-btn { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; padding: 0; }

@@ -2,7 +2,9 @@
 import { audioContext, decode, toAnalysisPCM, analyze, StrokeBank } from './engine/audio.js';
 import { Transport } from './engine/transport.js';
 import { USULS } from './usuls.js';
-import { usulPattern, cyclePositions } from './patterns.js';
+import { usulPattern, groovePattern, cyclePositions } from './patterns.js';
+import { GROOVES } from './grooves.js';
+import { styleProfile, detectStyle } from './style.js';
 import { Doira } from './doira.js';
 
 const $ = (id) => document.getElementById(id);
@@ -17,11 +19,12 @@ const state = {
   feel: 'player',     // 'player' (measured gaps) or 'machine' (even)
   pattern: null,
   lastStroke: null,
+  styles: null,        // data/styles.json
+  style: null,         // { detected, confidence, scores, override }
 };
 const analyses = new Map(); // song id -> analysis (analyse each song once per visit)
 
 const drum = new Doira($('drum'));
-drum.setBeads(beadsFor('toy'));
 
 // ---------------------------------------------------------------- library
 
@@ -68,7 +71,7 @@ async function openLibrarySong(s) {
       const r = await fetch(`library/${info.files.original}`);
       if (r.ok) audio = await r.arrayBuffer();
     } catch (e) { /* not on this computer */ }
-    await startSong({ id: s.id, title: s.title, artist: s.artist, files: info.files },
+    await startSong({ id: s.id, title: s.title, artist: s.artist, files: info.files, renderedStyle: info.style },
       audio ? await decode(audio) : null, info.analysis);
   } catch (e) {
     console.error(e);
@@ -104,6 +107,7 @@ async function startSong(meta, buffer, analysis) {
   await ensureBank();
   drum.busy = false;
   state.song = { ...meta, buffer, analysis };
+  state.style = await songStyle(analysis);
   const t = new Transport({ bank: state.bank });
   t.setSong(buffer, analysis.duration);
   t.onStroke(onStroke);
@@ -168,10 +172,37 @@ $('back').addEventListener('click', () => {
 
 // ---------------------------------------------------------------- rhythm
 
-// Until style detection exists, Auto plays to'y: it fits 4/4 songs naturally.
-const resolveUsul = () => (state.usul === 'auto' ? 'toy' : state.usul);
+// Auto plays the groove for the song's style (detected, or chosen in More).
+// With no song yet, Auto shows to'y.
+const currentStyle = () => (state.style ? state.style.override || state.style.detected : null);
+// a style without a groove in grooves.js (e.g. a newly labelled one) plays to'y
+const resolveUsul = () => (state.usul === 'auto' ? (GROOVES[currentStyle()] ? `groove:${currentStyle()}` : 'toy') : state.usul);
+const isGroove = (id) => id.startsWith('groove:');
+
+async function loadStyles() {
+  if (!state.styles) {
+    try { state.styles = await (await fetch('data/styles.json')).json(); } catch (e) { state.styles = { styles: {}, examples: [] }; }
+  }
+  return state.styles;
+}
+
+// Library songs carry their drum profile; uploads are profiled here.
+async function songStyle(an) {
+  const data = await loadStyles();
+  const prof = an.style ? an.style : an.band16 ? styleProfile(an) : null;
+  if (!prof || !prof.bars || !data.examples.length) return null;
+  const r = detectStyle(prof.profile, data.examples);
+  return { detected: r.style, confidence: r.confidence, scores: r.scores, override: null };
+}
+
+const styleName = (id) => (state.styles && state.styles.styles[id] ? state.styles.styles[id].name : id);
 
 function beadsFor(id, positions) {
+  if (isGroove(id)) {
+    const g = GROOVES[id.slice(7)];
+    const hits = [...g.steps].map((c, step) => ({ c, step })).filter((h) => h.c !== '.');
+    return hits.map((h) => ({ code: h.c, pos: h.step / 16 }));
+  }
   const u = USULS[id];
   const pos = positions || cyclePositions(u, u.gaps && state.feel === 'player' ? 1 : 0);
   return [...u.seq].map((code, k) => ({ code, pos: pos[k] }));
@@ -179,6 +210,7 @@ function beadsFor(id, positions) {
 
 function applyRhythm() {
   const id = resolveUsul();
+  if (isGroove(id)) return applyGroove(id.slice(7));
   const u = USULS[id];
   document.querySelector('[data-group="fit"]').hidden = id === 'toy';
   // usuls without measured gaps (1, 3) can only be played evenly
@@ -190,6 +222,19 @@ function applyRhythm() {
   drum.setBeads(beadsFor(id, state.pattern.positions));
   const how = id === 'toy' ? 'one group per beat' : state.fit ? 'fit to the bar' : 'free against the bar';
   $('subtitle').textContent = `${s.artist ? s.artist + ' · ' : ''}${state.usul === 'auto' ? 'Auto: ' : ''}${u.name}, ${how}`;
+  renderFacts();
+}
+
+function applyGroove(styleId) {
+  document.querySelector('[data-group="fit"]').hidden = true;
+  document.querySelectorAll('[data-feel]').forEach((b) => { b.disabled = true; });
+  const s = state.song;
+  state.pattern = groovePattern(s.analysis, styleId);
+  state.transport.setPattern(state.pattern);
+  drum.setBeads(beadsFor(`groove:${styleId}`));
+  const st = state.style;
+  const how = st.override ? 'your choice' : `${Math.round(st.confidence * 100)} % sure`;
+  $('subtitle').textContent = `${s.artist ? s.artist + ' · ' : ''}Auto: ${styleName(styleId).toLowerCase()} (${how})`;
   renderFacts();
 }
 
@@ -211,25 +256,53 @@ document.querySelectorAll('.seg').forEach((seg) => seg.addEventListener('click',
 function renderFacts() {
   const s = state.song;
   if (!s) return;
-  const an = s.analysis, u = USULS[resolveUsul()];
-  const rows = [
-    ['Tempo', `${an.bpm.toFixed(1)} BPM`],
-    ['Usul', `${u.name} · ${u.seq.length} strokes${u.note ? ` (${u.note})` : ''}`],
-    ['Cycle', u.seq.split('').join(' ')],
-    ['Feel', feelText(u)],
-    ['Strokes', `${state.bank.label}, recorded`],
-  ];
+  const an = s.analysis, id = resolveUsul();
+  const rows = [['Tempo', `${an.bpm.toFixed(1)} BPM`]];
+  if (isGroove(id)) {
+    const g = GROOVES[id.slice(7)];
+    rows.push(['Rhythm', `${g.name}: ${g.steps.replace(/\./g, '·')} (a studio groove, not from the research)`]);
+  } else {
+    const u = USULS[id];
+    rows.push(['Usul', `${u.name} · ${u.seq.length} strokes${u.note ? ` (${u.note})` : ''}`],
+      ['Cycle', u.seq.split('').join(' ')], ['Feel', feelText(u)]);
+  }
+  rows.push(['Strokes', `${state.bank.label}, recorded`]);
   let html = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+
+  // style: detected + confidence, and a choice that overrides it
+  const st = state.style;
+  if (st) {
+    const detail = st.scores.map((x) => `${styleName(x.style)} ${Math.round(x.probability * 100)} %`).join(' · ');
+    const pick = Object.keys(state.styles.styles).map((k) =>
+      `<button data-style-pick="${esc(k)}" aria-pressed="${currentStyle() === k}">${esc(styleName(k))}</button>`).join('');
+    html += `<dt>Style</dt><dd>Detected: ${esc(detail)}${st.override ? ` · <button class="link-btn" data-style-pick="">use detected</button>` : ''}
+      <div class="seg small style-pick">${pick}</div></dd>`;
+  } else {
+    html += '<dt>Style</dt><dd>Not detected (no steady drums found)</dd>';
+  }
   // the to'y renders made by add_song.py
   const f = s.files;
   if (f) {
     const links = [];
-    if (s.buffer) links.push([`library/${f.merged}`, "Song + doira (to'y)"], [`library/${f.doira}`, "Doira only (to'y)"]);
+    if (s.buffer) {
+      links.push([`library/${f.merged}`, "Song + doira (to'y)"], [`library/${f.doira}`, "Doira only (to'y)"]);
+      if (f.grooveMerged) links.push([`library/${f.grooveMerged}`, `Song + doira (${s.renderedStyle ? styleName(s.renderedStyle.detected).toLowerCase() : 'style'} groove)`], [`library/${f.grooveDoira}`, 'Doira only (groove)']);
+    }
     else links.push([`library/${f.doiraPublic}`, "Doira only (to'y)"]);
     html += `<dt>Download</dt><dd>${links.map(([href, label]) => `<a class="dl" href="${esc(href)}" download>${esc(label)}</a>`).join('<br>')}</dd>`;
   }
   $('facts').innerHTML = html;
 }
+
+// choosing a style in More overrides the detection; Auto then plays that groove
+$('facts').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-style-pick]');
+  if (!b || !state.style) return;
+  state.style.override = b.dataset.stylePick || null;
+  state.usul = 'auto';
+  document.querySelectorAll('[data-usul]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.usul === 'auto')));
+  applyRhythm();
+});
 
 function feelText(u) {
   const p = state.pattern;
@@ -335,4 +408,5 @@ function frame() {
 }
 requestAnimationFrame(frame);
 
+drum.setBeads(beadsFor('toy'));
 loadLibrary();

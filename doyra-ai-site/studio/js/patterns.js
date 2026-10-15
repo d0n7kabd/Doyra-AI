@@ -8,6 +8,7 @@
 // In both cases the number of bars / grid steps is chosen so the strokes come
 // as close as possible to the usul's own measured spacing.
 import { USULS, STROKES, DEFAULT_GAP } from './usuls.js';
+import { GROOVES } from './grooves.js';
 
 // ---------------------------------------------------------------- feel
 // "Player" timing uses the measured gaps; "machine" spaces strokes evenly.
@@ -80,6 +81,37 @@ export function usulPattern(an, usulId, { fit = true, feel = 'player' } = {}) {
   }
   const fn = windowed(events);
   Object.assign(fn, { feel: amount, positions, strokeGap, usul: usulId });
+  return fn;
+}
+
+// A style groove: one bar of 16 steps on the song's 16th-note grid, from the
+// first bar line. Grooves have no measured feel, so they are always even.
+export function groovePattern(an, styleId) {
+  const g = GROOVES[styleId];
+  const hits = [...g.steps].map((c, step) => ({ c, step })).filter((h) => h.c !== '.');
+  const n = hits.length;
+  const { grid16, firstBeat16, downbeat, period } = an;
+  const g0 = firstBeat16 + downbeat * 4;
+  const end = an.duration - 0.15;
+  const slots = [];
+  for (let bar = 0; g0 + bar * 16 < grid16.length; bar++) {
+    hits.forEach((h, k) => {
+      const i = g0 + bar * 16 + h.step;
+      if (i < grid16.length) slots.push({ time: grid16[i], k, code: h.c, cycle: bar });
+    });
+  }
+  const events = [];
+  for (let i = 0; i < slots.length; i++) {
+    const s = slots[i];
+    if (s.time < 0 || s.time > end) continue;
+    events.push({
+      time: s.time, code: s.code, k: s.k, n, cycle: s.cycle,
+      next: i + 1 < slots.length ? slots[i + 1].time : s.time + period / 4,
+      gain: Math.min(1, STROKES[s.code].gain * (s.k === 0 ? 1.1 : 1)),
+    });
+  }
+  const fn = windowed(events);
+  Object.assign(fn, { feel: 0, positions: hits.map((h) => h.step / 16), strokeGap: period / 4, groove: styleId, seq: hits.map((h) => h.c).join('') });
   return fn;
 }
 

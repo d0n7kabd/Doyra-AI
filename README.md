@@ -119,7 +119,59 @@ python -m http.server 8000
 ```
 
 Then open <http://localhost:8000>. The "Play with the AI" button opens
-`studio/index.html`, the Doyra Studio app.
+`studio/index.html`, Doyra Studio. After pulling changes, reload with
+Ctrl+F5 so the browser doesn't keep old files.
+
+## Doyra Studio
+
+`doyra-ai-site/studio/` is where people play with the AI: pick a song (or
+choose your own file) and hear it with a doira, in an usul or in a groove for
+the song's style. Every drum sound is one of the recorded strokes.
+
+- **Rhythm**: Auto (a groove for the detected style: house, reggaeton, pop),
+  to'y, or Usul 1, 3, 4, 5, 6. Usuls that don't fill a 4/4 bar can be fitted
+  to the bar or run free against it.
+- **Feel**: Player uses the measured gaps, scaled by tempo (full at the
+  recorded tempo, fading toward the slow recordings' amounts); Machine is even.
+- **More**: tempo, the usul and its feel, the detected style with confidence
+  (and a choice that overrides it), downloads.
+
+### Song library
+
+Song audio stays on this laptop (`songs/` and `studio/library/audio/` are in
+`.gitignore`). On the public website each library song plays the doira alone
+on the song's analysed beat.
+
+```bash
+python tools/library/add_song.py --file "songs/Despacito.mp3" --title "Despacito" --artist "Luis Fonsi"
+python tools/library/add_song.py --folder songs/      # every song in the folder
+python tools/library/add_song.py --remove despacito
+```
+
+In `--folder` mode names come from `songs/titles.csv` (file, title, artist,
+id, skip), then the file's tags, then a file name like `Artist - Title.mp3`.
+Needs Node.js: the library uses the studio's own analysis code.
+
+### Style detection
+
+Nearest neighbour on each song's drum onset profile (kick, snare, hi-hat at
+the 16 positions of a bar), against labelled examples in
+`studio/data/styles.json`. Add your own labels, or a new style:
+
+```bash
+node tools/library/style_report.mjs                     # detection on every library song
+python tools/library/label_style.py --id gasolina --style reggaeton
+python tools/library/label_style.py --new-style uzbek-pop --name "Uzbek pop"
+```
+
+### Engine checks
+
+```bash
+python tools/build_sounds.py                            # stroke bank from data/clips
+python tools/make_engine_test.py synth --style pop --bpm 96 --out test.f32
+node tools/check_engine.mjs test.f32                    # tempo, beats, bar line vs. answer key
+python tools/measure_usul_tempo.py "folder with Usul_*_normal/slow.m4a"
+```
 
 ## Folder structure
 
@@ -139,8 +191,9 @@ scripts/                 phrase analysis + draft-writing scripts
 doyra-ai-site/           the website (GitHub Pages)
   index.html, style.css, script.js
   sounds/                one real recording per stroke, copied from data/clips
-  studio/                Doyra Studio, the interactive app (to be added)
-tools/song2doira/        Doyra Studio's Python tools (to be added)
+  studio/                Doyra Studio: index.html, js/ (engine, usuls, patterns,
+                         style), sounds/players/ (stroke banks), library/, data/
+tools/                   stroke bank, library (add_song.py), style labels, engine tests
 PROJECT_BRIEF.md         original brief for the Level 1 classifier
 ```
 

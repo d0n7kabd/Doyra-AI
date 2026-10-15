@@ -19,12 +19,16 @@ Usage:
   python tools/library/add_song.py --folder songs/            # every mp3/m4a/wav/flac in the folder
   python tools/library/add_song.py --remove despacito
 
-In --folder mode, name files "Artist - Title.mp3" to set artist and title.
+In --folder mode the title and artist come from, in order: songs/titles.csv
+(columns: file,title,artist[,id][,skip]; skip=yes leaves a file out), the
+file's tags, or a name like
+"Artist - Title.mp3".
 Needs Node.js (the analysis is the same JavaScript the browser runs).
 """
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import re
 import shutil
@@ -55,15 +59,29 @@ AUDIO_EXT = {".mp3", ".m4a", ".aac", ".wav", ".flac", ".ogg"}
 # ---------------------------------------------------------------- audio io
 
 def decode(path: Path, sr: int, layout: str) -> np.ndarray:
-    """Decode to float32, shape (channels, samples)."""
+    """Decode to float32, shape (channels, samples). Damaged packets are
+    skipped (some downloaded mp3s have a few), as a browser would."""
     with av.open(str(path)) as c:
+        stream = c.streams.audio[0]
         rs = av.AudioResampler(format="fltp", layout=layout, rate=sr)
-        chunks = []
-        for frame in c.decode(audio=0):
-            for f in rs.resample(frame):
-                chunks.append(f.to_ndarray())
+        chunks, bad = [], 0
+        for packet in c.demux(stream):
+            try:
+                frames = packet.decode()
+            except av.error.InvalidDataError:
+                # keep the timeline: silence for the damaged packet's length
+                bad += 1
+                if packet.duration and packet.time_base:
+                    n = int(round(float(packet.duration * packet.time_base) * sr))
+                    chunks.append(np.zeros((1 if layout == "mono" else 2, n), dtype=np.float32))
+                continue
+            for frame in frames:
+                for f in rs.resample(frame):
+                    chunks.append(f.to_ndarray())
         for f in rs.resample(None):
             chunks.append(f.to_ndarray())
+    if bad:
+        print(f"  note: {bad} damaged packet(s) in {path.name} replaced with silence")
     return np.concatenate(chunks, axis=1).astype(np.float32)
 
 
@@ -159,8 +177,9 @@ def add_song(src: Path, title: str, artist: str, song_id: str | None = None) -> 
         subprocess.run(["node", str(ANALYZE), str(f32), str(out)], check=True,
                        stderr=subprocess.DEVNULL if "--verbose" not in sys.argv else None)
         result = json.loads(out.read_text(encoding="utf-8"))
-    an, parts = result["analysis"], result["parts"]
-    print(f"  {an['bpm']:.1f} BPM, {len(an['beats'])} beats, first bar line at {an['beats'][an['downbeat']]:.2f} s")
+    an, parts, style = result["analysis"], result["parts"], result.get("style")
+    print(f"  {an['bpm']:.1f} BPM, {len(an['beats'])} beats, first bar line at {an['beats'][an['downbeat']]:.2f} s"
+          + (f", style {style['detected']} ({style['confidence']:.0%})" if style else ", style not detected"))
 
     print("  rendering the doira (to'y)...")
     song = decode(src, SR, "stereo")
@@ -173,6 +192,13 @@ def add_song(src: Path, title: str, artist: str, song_id: str | None = None) -> 
     encode_m4a(AUDIO / f"{song_id}_merged.m4a", fit_peak(SONG_GAIN * song + doira[None, :]), SR, 192_000)
     encode_m4a(AUDIO / f"{song_id}_doira.m4a", fit_peak(doira[None, :]), SR, 128_000)
     encode_m4a(PUBLIC / f"{song_id}_doira.m4a", fit_peak(doira[None, :]), SR, 64_000)
+    files_groove = {}
+    if "groove" in parts:  # the detected style's groove: laptop renders only
+        print(f"  rendering the doira ({style['detected']} groove)...")
+        groove = render_part(parts["groove"], song.shape[1], bank, seed=sum(map(ord, song_id)) + 1)
+        encode_m4a(AUDIO / f"{song_id}_groove_merged.m4a", fit_peak(SONG_GAIN * song + groove[None, :]), SR, 192_000)
+        encode_m4a(AUDIO / f"{song_id}_groove_doira.m4a", fit_peak(groove[None, :]), SR, 128_000)
+        files_groove = {"grooveMerged": f"audio/{song_id}_groove_merged.m4a", "grooveDoira": f"audio/{song_id}_groove_doira.m4a"}
 
     entry = {
         "id": song_id,
@@ -186,8 +212,10 @@ def add_song(src: Path, title: str, artist: str, song_id: str | None = None) -> 
             "merged": f"audio/{song_id}_merged.m4a",
             "doira": f"audio/{song_id}_doira.m4a",
             "doiraPublic": f"doira/{song_id}_doira.m4a",
+            **files_groove,
         },
-        "parts": {"toy": "rendered in merged / doira files"},
+        "style": style,
+        "parts": {"toy": "merged / doira files", **({"groove": f"{style['detected']}: groove files"} if files_groove else {})},
     }
     (LIB / f"{song_id}.json").write_text(json.dumps({**entry, "analysis": an}, ensure_ascii=False), encoding="utf-8")
     idx = read_index()
@@ -209,6 +237,23 @@ def remove_song(song_id: str) -> None:
     print(f"removed {song_id}")
 
 
+def titles_csv(folder: Path) -> dict[str, dict]:
+    p = folder / "titles.csv"
+    if not p.exists():
+        return {}
+    with open(p, newline="", encoding="utf-8-sig") as f:
+        return {r["file"].strip(): r for r in csv.DictReader(f) if r.get("file")}
+
+
+def title_artist_from_tags(path: Path) -> tuple[str, str]:
+    try:
+        with av.open(str(path)) as c:
+            md = {k.lower(): v for k, v in c.metadata.items()}
+    except Exception:
+        return "", ""
+    return md.get("title", "").strip(), md.get("artist", "").strip()
+
+
 def title_artist_from_name(path: Path) -> tuple[str, str]:
     stem = re.sub(r"\s+", " ", path.stem).strip()
     if " - " in stem:
@@ -218,6 +263,7 @@ def title_artist_from_name(path: Path) -> tuple[str, str]:
 
 
 def main() -> None:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # song names in any script
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--file", type=Path, help="one song file")
@@ -246,14 +292,25 @@ def main() -> None:
         songs = read_index()["songs"]
         have_ids = {s["id"] for s in songs}
         have_src = {s.get("source") for s in songs}
+        named = titles_csv(a.folder)
         failed = []
         for p in files:
-            title, artist = title_artist_from_name(p)
-            if (p.name in have_src or slug(title) in have_ids) and not a.force:
+            row = named.get(p.name)
+            if row and (row.get("skip") or "").strip().lower() in ("yes", "y", "1", "true"):
+                print(f"{p.name}: skipped (titles.csv)")
+                continue
+            if row:
+                title, artist, song_id = row["title"].strip(), row.get("artist", "").strip(), (row.get("id") or "").strip() or None
+            else:
+                title, artist = title_artist_from_tags(p)
+                if not title:
+                    title, artist = title_artist_from_name(p)
+                song_id = None
+            if (p.name in have_src or (song_id or slug(title)) in have_ids) and not a.force:
                 print(f"{p.name}: already in the library, skipping (use --force to redo)")
                 continue
             try:
-                add_song(p, title, artist)
+                add_song(p, title, artist, song_id)
             except Exception as e:  # keep going with the rest of the folder
                 print(f"  FAILED: {e}")
                 failed.append(p.name)
