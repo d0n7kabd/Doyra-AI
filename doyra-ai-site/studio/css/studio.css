@@ -109,3 +109,29 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .sheet a.dl { color: var(--gold); }
 .style-pick { justify-content: flex-start; margin-top: 10px; }
 .link-btn { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; padding: 0; }
+
+/* engine indicator */
+.engine { font: 500 12px var(--f-d); opacity: .6; white-space: nowrap; }
+.engine.full { color: var(--gold); opacity: 1; }
+
+/* song sections on the timeline: brighter = louder */
+.scrub .sections { position: absolute; left: 0; right: 0; top: 9px; height: 10px; display: block; pointer-events: none; }
+.scrub .sections i { position: absolute; top: 0; height: 10px; border-radius: 2px; background: var(--skin); opacity: .12; border-left: 2px solid var(--ink); }
+.scrub .sections i.low { opacity: .2; }
+.scrub .sections i.mid { opacity: .3; }
+.scrub .sections i.high { opacity: .45; }
+.scrub .sections i.none { opacity: .08; }
+.scrub .sections i.silent { opacity: 0; }
+.scrub #scrub-fill { z-index: 1; }
+
+/* keep an upload */
+.keep { text-align: center; margin: -10px 0 22px; font-size: 15px; font-style: italic; }
+.keep-btn { font: 500 14px var(--f-d); color: var(--gold); border: 1.5px solid var(--gold); border-radius: 999px; padding: 8px 14px; margin-right: 8px; font-style: normal; }
+.keep-btn:disabled { opacity: .5; }
+#keep-note { opacity: .6; }
+
+/* my songs: a small remove button on the card */
+.card-wrap { position: relative; flex: 0 0 auto; scroll-snap-align: start; }
+.card-wrap .remove { position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; font: 500 14px var(--f-d); opacity: .5; }
+.card-wrap .remove:hover { opacity: 1; color: var(--gold); }
+.card .where { display: block; font-style: italic; font-size: 13px; opacity: .55; margin-top: 2px; }

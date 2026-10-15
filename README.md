@@ -136,6 +136,32 @@ the song's style. Every drum sound is one of the recorded strokes.
 - **More**: tempo, the usul and its feel, the detected style with confidence
   (and a choice that overrides it), downloads.
 
+### Your own songs
+
+Any song can be uploaded in the studio. The doira part is built for that song
+by the arranger (`studio/js/engine/arranger.js`): it finds the sections,
+transcribes the song's own drums per section (kick → bum, snare/clap → bak,
+hi-hat → kichik bak; only hits that repeat in 3 of 4 bars), follows the
+song's loudness (quiet parts get kichik strokes, choruses full ones, parts
+without drums a soft cycle), adds a roll into each new section and a small
+variation every 4th bar, and applies the to'y bak-bak feel scaled by tempo.
+The same file always gets the same arrangement. "Add to my songs" keeps an
+upload in the browser (IndexedDB); nothing is uploaded anywhere.
+
+### Full power on this laptop
+
+```bash
+python tools/server/app.py          # then open http://localhost:8000/studio/
+python tools/server/app.py --no-demucs
+```
+
+One command serves the website and runs the full pipeline for uploads,
+including Demucs exact drums (`pip install demucs`; the model downloads on
+first use). The studio shows "AI engine: full (laptop)" when it is running,
+otherwise "AI engine: browser". Demucs runs on the CPU, so only 4 bars of
+each drum section are separated by default (`add_song.py --full-demucs`
+separates whole songs). The server only listens on this computer (127.0.0.1).
+
 ### Song library
 
 Song audio stays on this laptop (`songs/` and `studio/library/audio/` are in
@@ -146,6 +172,7 @@ on the song's analysed beat.
 python tools/library/add_song.py --file "songs/Despacito.mp3" --title "Despacito" --artist "Luis Fonsi"
 python tools/library/add_song.py --folder songs/      # every song in the folder
 python tools/library/add_song.py --remove despacito
+python tools/library/add_song.py --folder songs/ --no-demucs   # faster: no exact drums
 ```
 
 In `--folder` mode names come from `songs/titles.csv` (file, title, artist,
@@ -170,6 +197,7 @@ python tools/library/label_style.py --new-style uzbek-pop --name "Uzbek pop"
 python tools/build_sounds.py                            # stroke bank from data/clips
 python tools/make_engine_test.py synth --style pop --bpm 96 --out test.f32
 node tools/check_engine.mjs test.f32                    # tempo, beats, bar line vs. answer key
+node tools/check_arranger.mjs test.f32 --key test.json  # sections, transcription vs. answer key
 python tools/measure_usul_tempo.py "folder with Usul_*_normal/slow.m4a"
 ```
 

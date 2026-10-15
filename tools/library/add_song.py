@@ -32,14 +32,14 @@ import csv
 import json
 import re
 import shutil
-import subprocess
 import sys
-import tempfile
 import unicodedata
 from pathlib import Path
 
 import av
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # pipeline.py, drums.py
 
 REPO = Path(__file__).resolve().parents[2]
 STUDIO = REPO / "doyra-ai-site" / "studio"
@@ -47,7 +47,6 @@ LIB = STUDIO / "library"
 AUDIO = LIB / "audio"
 PUBLIC = LIB / "doira"
 BANK = STUDIO / "sounds" / "players" / "doniyor"
-ANALYZE = REPO / "tools" / "library" / "analyze.mjs"
 
 SR = 44100
 ANALYSIS_SR = 22050
@@ -163,42 +162,49 @@ def write_index(idx: dict) -> None:
     (LIB / "index.json").write_text(json.dumps(idx, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def add_song(src: Path, title: str, artist: str, song_id: str | None = None) -> dict:
+def add_song(src: Path, title: str, artist: str, song_id: str | None = None, use_demucs: bool = True,
+             full_demucs: bool = False) -> dict:
+    import pipeline
     song_id = song_id or slug(title)
     print(f"[{song_id}] {title}{' - ' + artist if artist else ''}")
     AUDIO.mkdir(parents=True, exist_ok=True)
     PUBLIC.mkdir(parents=True, exist_ok=True)
 
-    with tempfile.TemporaryDirectory() as tmp:
-        f32 = Path(tmp) / "song.f32"
-        out = Path(tmp) / "analysis.json"
-        decode(src, ANALYSIS_SR, "mono")[0].astype("<f4").tofile(f32)
-        print("  analysing...")
-        subprocess.run(["node", str(ANALYZE), str(f32), str(out)], check=True,
-                       stderr=subprocess.DEVNULL if "--verbose" not in sys.argv else None)
-        result = json.loads(out.read_text(encoding="utf-8"))
-    an, parts, style = result["analysis"], result["parts"], result.get("style")
-    print(f"  {an['bpm']:.1f} BPM, {len(an['beats'])} beats, first bar line at {an['beats'][an['downbeat']]:.2f} s"
-          + (f", style {style['detected']} ({style['confidence']:.0%})" if style else ", style not detected"))
+    def progress(stage, partial):
+        if stage == "analysing":
+            print("  analysing...")
+        elif stage == "analysed":
+            an, style = partial["analysis"], partial.get("style")
+            print(f"  {an['bpm']:.1f} BPM, {len(an['beats'])} beats, first bar line at {an['beats'][an['downbeat']]:.2f} s"
+                  + (f", style {style['detected']} ({style['confidence']:.0%})" if style else ", style not detected"))
+        elif stage == "separating drums":
+            print("  separating the drums (Demucs, takes a while on CPU)...")
 
-    print("  rendering the doira (to'y)...")
-    song = decode(src, SR, "stereo")
+    song = pipeline.process(src, use_demucs=use_demucs, progress=progress, full_demucs=full_demucs)
+    an, style = song["analysis"], song.get("style")
+    print("  arranging and rendering the doira...")
+    parts = pipeline.arrangement(song)
+    audio = decode(src, SR, "stereo")
     bank = load_bank()
-    doira = render_part(parts["toy"], song.shape[1], bank, seed=sum(map(ord, song_id)))
+    seed = song["seed"]
+    render = {name: render_part(events, audio.shape[1], bank, seed=seed + i) for i, (name, events) in enumerate(parts.items())}
 
     original = AUDIO / f"{song_id}_original{src.suffix.lower()}"
     if src.resolve() != original.resolve():
         shutil.copy2(src, original)
-    encode_m4a(AUDIO / f"{song_id}_merged.m4a", fit_peak(SONG_GAIN * song + doira[None, :]), SR, 192_000)
-    encode_m4a(AUDIO / f"{song_id}_doira.m4a", fit_peak(doira[None, :]), SR, 128_000)
-    encode_m4a(PUBLIC / f"{song_id}_doira.m4a", fit_peak(doira[None, :]), SR, 64_000)
-    files_groove = {}
-    if "groove" in parts:  # the detected style's groove: laptop renders only
-        print(f"  rendering the doira ({style['detected']} groove)...")
-        groove = render_part(parts["groove"], song.shape[1], bank, seed=sum(map(ord, song_id)) + 1)
-        encode_m4a(AUDIO / f"{song_id}_groove_merged.m4a", fit_peak(SONG_GAIN * song + groove[None, :]), SR, 192_000)
-        encode_m4a(AUDIO / f"{song_id}_groove_doira.m4a", fit_peak(groove[None, :]), SR, 128_000)
-        files_groove = {"grooveMerged": f"audio/{song_id}_groove_merged.m4a", "grooveDoira": f"audio/{song_id}_groove_doira.m4a"}
+    files = {"original": f"audio/{original.name}", "doiraPublic": f"doira/{song_id}_doira.m4a"}
+    # Auto (the song's own drums): merged + doira only; to'y and the style groove: merged
+    encode_m4a(AUDIO / f"{song_id}_merged.m4a", fit_peak(SONG_GAIN * audio + render["drums"][None, :]), SR, 192_000)
+    encode_m4a(AUDIO / f"{song_id}_doira.m4a", fit_peak(render["drums"][None, :]), SR, 128_000)
+    encode_m4a(PUBLIC / f"{song_id}_doira.m4a", fit_peak(render["drums"][None, :]), SR, 64_000)
+    files.update({"merged": f"audio/{song_id}_merged.m4a", "doira": f"audio/{song_id}_doira.m4a"})
+    encode_m4a(AUDIO / f"{song_id}_toy_merged.m4a", fit_peak(SONG_GAIN * audio + render["toy"][None, :]), SR, 192_000)
+    files["toyMerged"] = f"audio/{song_id}_toy_merged.m4a"
+    if "groove" in render:
+        encode_m4a(AUDIO / f"{song_id}_groove_merged.m4a", fit_peak(SONG_GAIN * audio + render["groove"][None, :]), SR, 192_000)
+        files["grooveMerged"] = f"audio/{song_id}_groove_merged.m4a"
+    for old in AUDIO.glob(f"{song_id}_groove_doira.m4a"):  # from before the arranger
+        old.unlink()
 
     entry = {
         "id": song_id,
@@ -207,23 +213,20 @@ def add_song(src: Path, title: str, artist: str, song_id: str | None = None) -> 
         "duration": an["duration"],
         "bpm": an["bpm"],
         "source": src.name,
-        "files": {
-            "original": f"audio/{original.name}",
-            "merged": f"audio/{song_id}_merged.m4a",
-            "doira": f"audio/{song_id}_doira.m4a",
-            "doiraPublic": f"doira/{song_id}_doira.m4a",
-            **files_groove,
-        },
+        "files": files,
         "style": style,
-        "parts": {"toy": "merged / doira files", **({"groove": f"{style['detected']}: groove files"} if files_groove else {})},
+        "seed": seed,
+        "exactDrums": song["drums16"] is not None,
     }
-    (LIB / f"{song_id}.json").write_text(json.dumps({**entry, "analysis": an}, ensure_ascii=False), encoding="utf-8")
+    (LIB / f"{song_id}.json").write_text(json.dumps({**entry, "analysis": an, "drums16": song["drums16"]},
+                                                    ensure_ascii=False), encoding="utf-8")
     idx = read_index()
     idx["songs"] = [s for s in idx["songs"] if s["id"] != song_id] + [
         {k: entry[k] for k in ("id", "title", "artist", "duration", "bpm", "source")}]
     write_index(idx)
     size = (PUBLIC / f"{song_id}_doira.m4a").stat().st_size / 1e6
-    print(f"  done: library/{song_id}.json, audio/ renders, public doira render {size:.1f} MB")
+    timing = ", ".join(f"{k} {v:.0f} s" for k, v in song["timings"].items())
+    print(f"  done ({timing}{'; exact drums by Demucs' if entry['exactDrums'] else ''}); public doira render {size:.1f} MB")
     return entry
 
 
@@ -273,6 +276,8 @@ def main() -> None:
     ap.add_argument("--artist", default="")
     ap.add_argument("--id", help="library id (default: from the title)")
     ap.add_argument("--force", action="store_true", help="--folder: redo songs already in the library")
+    ap.add_argument("--no-demucs", action="store_true", help="skip exact drums (Demucs): much faster")
+    ap.add_argument("--full-demucs", action="store_true", help="separate the whole song, not 4 bars per section (slow)")
     ap.add_argument("--verbose", action="store_true")
     a = ap.parse_args()
 
@@ -284,7 +289,7 @@ def main() -> None:
         if not a.file.exists():
             raise SystemExit(f"No such file: {a.file}")
         title, artist = (a.title, a.artist) if a.title else title_artist_from_name(a.file)
-        add_song(a.file, title, artist, a.id)
+        add_song(a.file, title, artist, a.id, use_demucs=not a.no_demucs, full_demucs=a.full_demucs)
     else:
         files = sorted(p for p in a.folder.iterdir() if p.suffix.lower() in AUDIO_EXT)
         if not files:
@@ -310,7 +315,7 @@ def main() -> None:
                 print(f"{p.name}: already in the library, skipping (use --force to redo)")
                 continue
             try:
-                add_song(p, title, artist, song_id)
+                add_song(p, title, artist, song_id, use_demucs=not a.no_demucs, full_demucs=a.full_demucs)
             except Exception as e:  # keep going with the rest of the folder
                 print(f"  FAILED: {e}")
                 failed.append(p.name)

@@ -72,6 +72,25 @@ export function analyzeSong(x, sr = ANALYSIS_SR) {
   };
 }
 
+// Kick / snare / hi-hat onset strength of signal x at given grid times
+// (e.g. a Demucs drum stem, measured on the full song's 16th grid).
+export function bandsOnGrid(x, grid16, sr = ANALYSIS_SR) {
+  const fps = sr / HOP;
+  const spec = spectralFeatures(x, sr);
+  const env = { low: normalizeEnv(spec.low, fps), mid: normalizeEnv(spec.mid, fps), high: normalizeEnv(spec.high, fps) };
+  const at = (e, time) => {
+    const c = Math.round(time * fps);
+    let m = 0;
+    for (let k = c - 1; k <= c + 1; k++) if (k >= 0 && k < e.length && e[k] > m) m = e[k];
+    return m;
+  };
+  return {
+    low: Float32Array.from(grid16, (t) => at(env.low, t)),
+    mid: Float32Array.from(grid16, (t) => at(env.mid, t)),
+    high: Float32Array.from(grid16, (t) => at(env.high, t)),
+  };
+}
+
 // ---------------------------------------------------------------- features
 
 function spectralFeatures(x, sr) {

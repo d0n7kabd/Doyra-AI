@@ -116,7 +116,7 @@ export function groovePattern(an, styleId) {
 }
 
 // Transport asks for the strokes in [from, to); binary search the precomputed list.
-function windowed(events) {
+export function windowed(events) {
   const fn = (from, to) => {
     let lo = 0, hi = events.length;
     while (lo < hi) { const m = (lo + hi) >> 1; if (events[m].time < from) lo = m + 1; else hi = m; }

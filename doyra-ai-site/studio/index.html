@@ -16,6 +16,7 @@
 
 <header class="bar">
   <a class="brand" href="../index.html">Doyra AI</a>
+  <span class="engine" id="engine" title="Which AI engine processes uploads">AI engine: …</span>
 </header>
 
 <main class="view">
@@ -35,9 +36,11 @@
   <section id="player" hidden>
     <div class="transport">
       <button class="pp" id="pp" aria-pressed="false" aria-label="Play"></button>
-      <div class="scrub" id="scrub" role="slider" aria-label="Song position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><i id="scrub-fill"></i></div>
+      <div class="scrub" id="scrub" role="slider" aria-label="Song position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><span class="sections" id="sections" aria-hidden="true"></span><i id="scrub-fill"></i></div>
       <span class="time" id="time">0:00</span>
     </div>
+
+    <p class="keep" id="keep-row" hidden><button class="keep-btn" id="keep">Add to my songs</button> <span id="keep-note">kept in this browser only</span></p>
 
     <div class="controls">
       <div class="seg" data-group="mix" role="group" aria-label="Mix">

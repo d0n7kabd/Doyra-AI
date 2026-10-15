@@ -8,6 +8,7 @@ Output is raw little-endian float32 (.f32), which Node can read without codecs.
 
 Usage:
     python tools/make_engine_test.py synth --bpm 96 --style pop --out test.f32
+    python tools/make_engine_test.py synth --bpm 124 --style house --out beat.wav   # playable file
     python tools/make_engine_test.py decode --file song.mp3 --out song.f32
 """
 from __future__ import annotations
@@ -115,7 +116,13 @@ def main():
     a = ap.parse_args()
     if a.cmd == "synth":
         y, key = synth(a.bpm, a.style, a.bars, a.seed, a.intro_bars)
-        y.tofile(a.out)
+        if a.out.suffix.lower() == ".wav":
+            import wave
+            with wave.open(str(a.out), "wb") as w:
+                w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
+                w.writeframes((np.clip(y, -1, 1) * 32767).astype("<i2").tobytes())
+        else:
+            y.tofile(a.out)
         a.out.with_suffix(".json").write_text(json.dumps(key), encoding="utf-8")
         print(f"{a.out}: {len(y) / SR:.1f} s, {a.bpm} BPM {a.style}, answer key -> {a.out.with_suffix('.json').name}")
     else:
