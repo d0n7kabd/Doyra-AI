@@ -124,8 +124,8 @@
 
   // ---------- rhythm engine: the to'y cycle ----------
   // 12 strokes: kichik bum, kichik bak, kichik bak, four times.
-  // Which hand plays each bak is set here (ta then ka).
-  const TOY_GROUP = ['kichik_bum_main', 'kichik_bak_main', 'kichik_bak_secondary'];
+  // Both baks are kichik bak with the main hand: "ta ta".
+  const TOY_GROUP = ['kichik_bum_main', 'kichik_bak_main', 'kichik_bak_main'];
   const TOY = Array.from({ length: 12 }, (_, i) => TOY_GROUP[i % 3]);
   const STEP = 0.2;     // even spacing between strokes (s), illustration tempo
   const SQUEEZE = 0.035; // baks 35 ms closer: middle of the measured 30-40 ms

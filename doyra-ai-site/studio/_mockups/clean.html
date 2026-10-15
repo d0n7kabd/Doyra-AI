@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doyra Studio — clean mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+/* Clean direction. Same fonts and colours as the landing page.
+   Three colours only: ink (background), skin (text, drum skin), gold (accent).
+   All the motion lives on the doira. */
+:root {
+  --ink: #0a1430;
+  --skin: #f1e4c8;
+  --gold: #e0a93b;
+  --f-d: "Unbounded", sans-serif;
+  --f-b: "Newsreader", Georgia, serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  min-height: 100svh;
+  background: var(--ink);
+  color: var(--skin);
+  font-family: var(--f-b);
+  font-size: 19px;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+/* ---- top bar ---- */
+.bar {
+  display: flex; align-items: center; gap: 20px;
+  padding: 18px clamp(16px, 4vw, 40px);
+  max-width: 1100px; margin: 0 auto;
+}
+.brand { font: 700 16px var(--f-d); color: var(--skin); text-decoration: none; margin-right: auto; }
+.tabs { display: flex; gap: 4px; }
+.tabs button { font: 500 14px var(--f-d); padding: 9px 14px; border-radius: 999px; opacity: .6; }
+.tabs button[aria-selected="true"] { opacity: 1; background: rgba(241,228,200,.1); }
+
+/* ---- stage ---- */
+.view { max-width: 1100px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px) 60px; }
+.view[hidden] { display: none; }
+.drum-box { width: min(100%, 520px, 62svh); aspect-ratio: 1; margin: 0 auto; position: relative; }
+.drum-box canvas { width: 100%; height: 100%; display: block; touch-action: manipulation; cursor: pointer; }
+
+.now { text-align: center; margin: 4px 0 26px; min-height: 64px; }
+.now h1 { font: 700 clamp(26px, 6vw, 40px)/1.1 var(--f-d); margin: 0; letter-spacing: -.02em; }
+.now p { margin: 6px 0 0; font-style: italic; opacity: .7; }
+
+/* ---- song row ---- */
+.songs[hidden] { display: none; }
+.songs { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.card {
+  width: 168px; padding: 16px; border-radius: 18px; text-align: left;
+  border: 1.5px solid rgba(241,228,200,.18);
+  display: grid; gap: 12px; transition: border-color .2s, transform .2s;
+}
+.card:hover { border-color: var(--gold); transform: translateY(-2px); }
+.card svg { width: 40px; height: 40px; }
+.card b { font: 500 16px/1.2 var(--f-d); display: block; }
+.card span { font-style: italic; font-size: 16px; opacity: .7; }
+.card.add { border-style: dashed; opacity: .7; }
+
+/* ---- 3 controls ---- */
+.controls { display: grid; gap: 18px; justify-items: center; }
+.controls[hidden] { display: none; }
+.seg { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.seg button {
+  font: 500 15px var(--f-d); padding: 11px 16px; border-radius: 999px;
+  border: 1.5px solid rgba(241,228,200,.2);
+}
+.seg button[aria-pressed="true"] { background: var(--skin); color: var(--ink); border-color: var(--skin); }
+.ctl-label { font-size: 15px; font-style: italic; opacity: .6; margin: 0 0 -10px; }
+.row-bottom { display: flex; gap: 18px; align-items: center; margin-top: 6px; }
+.back, .more-btn { font: 500 14px var(--f-d); opacity: .7; padding: 8px 4px; }
+.more-btn { color: var(--gold); opacity: 1; }
+
+/* ---- "More" sheet ---- */
+.sheet {
+  position: fixed; left: 50%; bottom: 0; transform: translate(-50%, 105%);
+  width: min(100%, 560px); padding: 26px 22px 34px;
+  background: var(--ink); border: 1.5px solid rgba(241,228,200,.18); border-bottom: 0;
+  border-radius: 24px 24px 0 0;
+  transition: transform .4s cubic-bezier(.2,.8,.2,1); z-index: 20;
+}
+.sheet.open { transform: translate(-50%, 0); }
+.sheet h2 { font: 700 18px var(--f-d); margin: 0 0 18px; }
+.sheet dl { display: grid; grid-template-columns: auto 1fr; gap: 12px 18px; margin: 0 0 20px; }
+.sheet dt { opacity: .6; font-style: italic; }
+.sheet dd { margin: 0; }
+.sections { display: flex; gap: 3px; height: 26px; margin: 0 0 22px; }
+.sections i { flex: var(--w); border-radius: 4px; background: rgba(241,228,200,.15); }
+.sections i.on { background: var(--gold); }
+.sheet .export { font: 500 15px var(--f-d); padding: 12px 18px; border-radius: 999px; border: 1.5px solid var(--gold); color: var(--gold); }
+.sheet .close { position: absolute; right: 16px; top: 16px; font: 500 14px var(--f-d); opacity: .7; padding: 6px; }
+.mock-note { font-size: 14px; opacity: .5; font-style: italic; margin: 14px 0 0; }
+
+/* ---- live ---- */
+.live-stage { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: clamp(8px, 3vw, 40px); margin: 30px auto 24px; max-width: 760px; }
+.live-stage figure { margin: 0; text-align: center; }
+.live-stage canvas { width: 100%; aspect-ratio: 1; display: block; }
+.live-stage figcaption { font: 500 15px var(--f-d); margin-top: 8px; }
+.ear { display: flex; gap: 5px; align-items: center; height: 40px; }
+.ear i { width: 4px; border-radius: 2px; background: var(--gold); height: 10px; animation: hear 1.2s ease-in-out infinite; }
+.ear i:nth-child(2) { animation-delay: .15s; } .ear i:nth-child(3) { animation-delay: .3s; } .ear i:nth-child(4) { animation-delay: .45s; }
+@keyframes hear { 50% { height: 34px; } }
+.mic {
+  display: grid; place-items: center; margin: 0 auto; width: 120px; height: 120px; border-radius: 50%;
+  background: var(--gold); color: var(--ink); font: 700 15px var(--f-d);
+  box-shadow: 0 0 0 0 rgba(224,169,59,.4); animation: breathe 2.4s ease-in-out infinite;
+}
+@keyframes breathe { 50% { box-shadow: 0 0 0 18px rgba(224,169,59,0); } }
+.live-note { text-align: center; opacity: .7; font-style: italic; margin: 18px 0 0; }
+
+@media (max-width: 560px) {
+  body { font-size: 18px; }
+  .card { width: calc(50% - 7px); }
+  .seg button { padding: 10px 13px; font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ear i, .mic { animation: none; }
+  .sheet { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <a class="brand" href="../../index.html">Doyra AI</a>
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-view="play">Play</button>
+    <button role="tab" aria-selected="false" data-view="live">Live</button>
+  </nav>
+</header>
+
+<!-- =============== PLAY =============== -->
+<main class="view" id="view-play">
+  <div class="drum-box"><canvas id="drum" aria-label="The doira. Tap the skin for bum, the rim for bak."></canvas></div>
+
+  <div class="now" id="now">
+    <h1>Pick a song</h1>
+    <p>or tap the drum</p>
+  </div>
+
+  <div class="songs" id="songs">
+    <button class="card" data-song="despacito">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#e0a93b" stroke-width="3"/><circle cx="20" cy="20" r="13" fill="#f1e4c8"/></svg>
+      <div><b>Despacito</b><span>Luis Fonsi</span></div>
+    </button>
+    <button class="card add">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#f1e4c8" stroke-width="2" stroke-dasharray="4 4"/><path d="M20 13v14M13 20h14" stroke="#f1e4c8" stroke-width="2"/></svg>
+      <div><b>Your song</b><span>drop a file</span></div>
+    </button>
+  </div>
+
+  <div class="controls" id="controls" hidden>
+    <div class="seg" data-group="mix">
+      <button aria-pressed="true">Song + doira</button>
+      <button aria-pressed="false">Doira only</button>
+    </div>
+    <p class="ctl-label">Rhythm</p>
+    <div class="seg" data-group="usul">
+      <button aria-pressed="true" data-usul="auto">Auto</button>
+      <button aria-pressed="false" data-usul="toy">To'y</button>
+      <button aria-pressed="false" data-usul="u1">1</button>
+      <button aria-pressed="false" data-usul="u3">3</button>
+      <button aria-pressed="false" data-usul="u4">4</button>
+      <button aria-pressed="false" data-usul="u5">5</button>
+      <button aria-pressed="false" data-usul="u6">6</button>
+    </div>
+    <p class="ctl-label">Feel</p>
+    <div class="seg" data-group="feel">
+      <button aria-pressed="true" data-feel="player">Player</button>
+      <button aria-pressed="false" data-feel="machine">Machine</button>
+    </div>
+    <div class="row-bottom">
+      <button class="back" id="back">← Songs</button>
+      <button class="more-btn" id="more">More</button>
+    </div>
+  </div>
+</main>
+
+<!-- =============== LIVE =============== -->
+<main class="view" id="view-live" hidden>
+  <div class="live-stage">
+    <figure><canvas id="you" aria-hidden="true"></canvas><figcaption>You</figcaption></figure>
+    <div class="ear" aria-label="The AI is listening"><i></i><i></i><i></i><i></i></div>
+    <figure><canvas id="ai" aria-hidden="true"></canvas><figcaption>The AI</figcaption></figure>
+  </div>
+  <button class="mic">Start</button>
+  <p class="live-note">Use headphones. Play a few strokes; the AI follows your tempo and answers in the gaps.</p>
+</main>
+
+<!-- =============== MORE =============== -->
+<aside class="sheet" id="sheet" aria-label="More">
+  <button class="close" id="close">Close</button>
+  <h2>More</h2>
+  <dl>
+    <dt>Tempo</dt><dd>— BPM</dd>
+    <dt>Style</dt><dd>— (confidence —)</dd>
+    <dt>Usul</dt><dd id="sheet-usul">To'y · 12 strokes</dd>
+  </dl>
+  <div class="sections" aria-label="Song sections">
+    <i style="--w:2"></i><i class="on" style="--w:4"></i><i style="--w:3"></i><i style="--w:4"></i><i style="--w:2"></i>
+  </div>
+  <button class="export">Export .m4a</button>
+  <p class="mock-note">Mockup: tempo, style and sections fill in once a song is analysed.</p>
+</aside>
+
+<script>
+(() => {
+  'use strict';
+  const TAU = Math.PI * 2;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const C = { ink: '#0a1430', skin: '#f1e4c8', gold: '#e0a93b' };
+  const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+
+  // ---- research data: strokes and usuls ----
+  const STROKE = {
+    B: { file: 'bum_main', bum: true }, b: { file: 'bum_secondary', bum: true },
+    T: { file: 'bak_main', syl: 'ta' }, t: { file: 'bak_secondary', syl: 'ka' },
+    K: { file: 'kichik_bak_main', syl: 'ta', small: true }, k: { file: 'kichik_bak_secondary', syl: 'ka', small: true },
+    M: { file: 'kichik_bum_main', bum: true, small: true }, m: { file: 'kichik_bum_secondary', bum: true, small: true },
+    n: { file: 'noxun_secondary', syl: 'ka', small: true },
+  };
+  // gaps: measured, relative to the mean gap. null = not measured yet (even spacing in this mockup).
+  const USULS = {
+    toy: { name: "To'y", seq: 'MKKMKKMKKMKK', gaps: [1.151, 0.886, 1.033, 1.092, 0.919, 1.038, 1.006, 0.936, 1.061, 0.938, 0.941, 1.0], mean: 0.236 },
+    u1:  { name: 'Usul 1', seq: 'KMKKtMKtKtMKKtM', gaps: null, mean: 0.236 },
+    u3:  { name: 'Usul 3', seq: 'KKtMKKtM', gaps: null, mean: 0.236 },
+    u4:  { name: 'Usul 4', seq: 'MKKMK', gaps: [0.652, 1.27, 0.748, 1.148, 1.274], mean: 0.334 },
+    u5:  { name: 'Usul 5', seq: 'MKKKMKK', gaps: [0.924, 0.935, 0.882, 1.027, 0.92, 0.897, 1.831], mean: 0.195 },
+    u6:  { name: 'Usul 6', seq: 'KtKtKtK', gaps: [1.28, 0.996, 0.971, 0.962, 0.927, 0.864, 1.0], mean: 0.192 }, // last gap not measured
+  };
+
+  // ---- sound: real recordings (the landing page's copies) ----
+  const audio = { ctx: null, buf: {}, loading: null };
+  function unlock() {
+    if (!audio.ctx) audio.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audio.ctx.state === 'suspended') audio.ctx.resume();
+    if (!audio.loading) {
+      const files = [...new Set(Object.values(STROKE).map((s) => s.file))];
+      audio.loading = Promise.all(files.map(async (f) => {
+        try {
+          const ab = await (await fetch(`../../sounds/${f}.wav`)).arrayBuffer();
+          audio.buf[f] = await new Promise((res, rej) => audio.ctx.decodeAudioData(ab, res, rej));
+        } catch (e) { /* visuals still work */ }
+      }));
+    }
+    return audio.loading;
+  }
+  function sound(code, when) {
+    const b = audio.buf[STROKE[code].file];
+    if (!b) return;
+    const s = audio.ctx.createBufferSource();
+    s.buffer = b; s.connect(audio.ctx.destination); s.start(when);
+  }
+
+  // ---- the doira ----
+  class Doira {
+    constructor(canvas, opts = {}) {
+      this.c = canvas; this.ctx = canvas.getContext('2d');
+      this.orbit = opts.orbit !== false;
+      this.ripples = []; this.sparks = []; this.words = [];
+      this.energy = 0; this.kick = 0; this.lit = -1; this.litT = 0; this.m = 1; this.mTarget = 1;
+      this.usul = USULS.toy; this.phase = -1;
+      this.rings = Array.from({ length: 40 }, (_, i) => ({ a: i / 40 * TAU, ph: Math.random() * TAU, f: 22 + Math.random() * 14 }));
+      new ResizeObserver(() => this.fit()).observe(canvas);
+      this.fit();
+    }
+    fit() {
+      const r = this.c.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+      this.c.width = Math.round(r.width * dpr); this.c.height = Math.round(r.height * dpr);
+      this.dpr = dpr; this.w = r.width; this.R = r.width / 2 * (this.orbit ? 0.74 : 0.78); this.Ri = this.R * 0.85;
+    }
+    // bead angle for stroke i: real (measured gaps) or machine (even), blended by m
+    angle(i, m = this.m) {
+      const u = this.usul, n = u.seq.length;
+      const even = i / n;
+      let real = even;
+      if (u.gaps) { const tot = u.gaps.reduce((a, b) => a + b, 0); real = u.gaps.slice(0, i).reduce((a, b) => a + b, 0) / tot; }
+      return -Math.PI / 2 + TAU * (even + (real - even) * m);
+    }
+    strike(code, i, at) {
+      const s = STROKE[code], t = performance.now() / 1000, R = this.R;
+      if (i !== undefined) { this.lit = i; this.litT = t; }
+      if (s.bum) {
+        const x = at ? at.x : 0, y = at ? at.y : 0;
+        this.ripples.push({ x, y, t, life: s.small ? 1.1 : 1.6, speed: R * (s.small ? 0.8 : 1), w: R * (s.small ? 0.035 : 0.055), s: s.small ? 0.7 : 1 });
+        this.kick = s.small ? 0.6 : 1; this.energy = Math.min(1.5, this.energy + 0.4);
+      } else {
+        const a = at ? Math.atan2(at.y, at.x) : i !== undefined ? this.angle(i) : -Math.PI / 4;
+        const x = Math.cos(a) * this.Ri * 0.98, y = Math.sin(a) * this.Ri * 0.98;
+        this.ripples.push({ x, y, t, life: 0.7, speed: R * 1.6, w: R * 0.02, s: 0.8 });
+        this.energy = Math.min(1.8, this.energy + (s.small ? 0.7 : 1));
+        if (!reduced) for (let k = 0; k < (s.small ? 12 : 22); k++) {
+          const sa = a + (Math.random() - 0.5) * 1.6, sp = R * (0.8 + Math.random() * 2);
+          this.sparks.push({ x, y, vx: Math.cos(sa) * sp, vy: Math.sin(sa) * sp, t, life: 0.4 + Math.random() * 0.4 });
+        }
+        if (s.syl) this.words.push({ text: s.syl, a, t });
+      }
+      if (this.ripples.length > 12) this.ripples.shift();
+    }
+    draw(t, dt) {
+      const { ctx, dpr, w, R, Ri } = this;
+      this.kick *= Math.exp(-dt * 7); this.energy *= Math.exp(-dt * 2.6);
+      this.m += (this.mTarget - this.m) * (1 - Math.exp(-dt * 6));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, w);
+      ctx.translate(w / 2, w / 2);
+
+      // --- bead string: the usul cycle around the drum ---
+      if (this.orbit) {
+        const Ro = R * 1.22, n = this.usul.seq.length;
+        ctx.strokeStyle = rgba(C.skin, 0.18); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(0, 0, Ro, 0, TAU); ctx.stroke();
+        // progress arc: where we are in the cycle
+        if (this.phase >= 0) {
+          ctx.strokeStyle = rgba(C.gold, 0.7); ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(0, 0, Ro, -Math.PI / 2, -Math.PI / 2 + TAU * this.phase); ctx.stroke();
+        }
+        for (let i = 0; i < n; i++) {
+          const code = this.usul.seq[i], s = STROKE[code], a = this.angle(i);
+          const on = i === this.lit && t - this.litT < 0.35;
+          const pulse = on ? 1 - (t - this.litT) / 0.35 : 0;
+          const r = (s.bum ? R * 0.05 : R * 0.035) * (1 + pulse * 0.6);
+          ctx.fillStyle = s.bum ? C.skin : C.gold;
+          ctx.globalAlpha = 0.55 + pulse * 0.45;
+          ctx.beginPath(); ctx.arc(Math.cos(a) * Ro, Math.sin(a) * Ro, r, 0, TAU); ctx.fill();
+          if (on && !reduced) {
+            ctx.strokeStyle = rgba(C.gold, pulse); ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(Math.cos(a) * Ro, Math.sin(a) * Ro, r + R * 0.06 * (1 - pulse), 0, TAU); ctx.stroke();
+          }
+          ctx.globalAlpha = 1;
+        }
+      }
+
+      const s = 1 + this.kick * 0.02;
+      ctx.save(); ctx.scale(s, s);
+      // glow behind on hits
+      if (this.energy > 0.03) {
+        const g = ctx.createRadialGradient(0, 0, R * 0.8, 0, 0, R * 1.25);
+        g.addColorStop(0, rgba(C.gold, 0.25 * Math.min(1, this.energy))); g.addColorStop(1, rgba(C.gold, 0));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, R * 1.25, 0, TAU); ctx.fill();
+      }
+      // frame: gold ring
+      ctx.fillStyle = C.gold;
+      ctx.beginPath(); ctx.arc(0, 0, R, 0, TAU); ctx.arc(0, 0, Ri, 0, TAU, true); ctx.fill();
+      ctx.fillStyle = rgba(C.ink, 0.25);
+      ctx.beginPath(); ctx.arc(0, 0, R * 0.965, 0, TAU); ctx.arc(0, 0, Ri * 1.02, 0, TAU, true); ctx.fill();
+      // skin
+      ctx.save();
+      ctx.beginPath(); ctx.arc(0, 0, Ri, 0, TAU); ctx.clip();
+      ctx.fillStyle = C.skin; ctx.fillRect(-Ri, -Ri, Ri * 2, Ri * 2);
+      const v = ctx.createRadialGradient(0, 0, Ri * 0.55, 0, 0, Ri);
+      v.addColorStop(0, rgba(C.gold, 0)); v.addColorStop(1, rgba(C.gold, 0.35));
+      ctx.fillStyle = v; ctx.fillRect(-Ri, -Ri, Ri * 2, Ri * 2);
+      for (let k = this.ripples.length - 1; k >= 0; k--) {
+        const rp = this.ripples[k], age = t - rp.t;
+        if (age > rp.life) { this.ripples.splice(k, 1); continue; }
+        const f = age / rp.life, fade = Math.pow(1 - f, 1.5) * rp.s;
+        for (let j = 0; j < 3; j++) {
+          const rr = rp.speed * age - j * rp.w * 2.2;
+          if (rr <= 0) continue;
+          ctx.lineWidth = rp.w * (1 - f * 0.5);
+          ctx.strokeStyle = rgba(C.gold, fade * 0.45 * (1 - j * 0.3));
+          ctx.beginPath(); ctx.arc(rp.x, rp.y, rr, 0, TAU); ctx.stroke();
+        }
+      }
+      ctx.restore();
+      // jingle rings on the inner rim
+      ctx.strokeStyle = C.gold; ctx.lineWidth = Math.max(1, R * 0.008);
+      for (const ring of this.rings) {
+        const wob = reduced ? 0 : Math.sin(t * ring.f + ring.ph) * this.energy;
+        const a = ring.a + wob * 0.015, rr = Ri * 0.93 + wob * R * 0.012;
+        ctx.beginPath(); ctx.ellipse(Math.cos(a) * rr, Math.sin(a) * rr, R * 0.026, R * 0.015, a + wob * 0.6, 0, TAU); ctx.stroke();
+      }
+      ctx.restore();
+
+      // sparks
+      for (let k = this.sparks.length - 1; k >= 0; k--) {
+        const p = this.sparks[k], age = t - p.t;
+        if (age > p.life) { this.sparks.splice(k, 1); continue; }
+        p.vx *= Math.exp(-dt * 2.5); p.vy *= Math.exp(-dt * 2.5); p.vy += R * 1.2 * dt;
+        p.x += p.vx * dt; p.y += p.vy * dt;
+        const f = 1 - age / p.life;
+        ctx.strokeStyle = rgba(C.gold, f); ctx.lineWidth = 1 + f * 2; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - p.vx * 0.03, p.y - p.vy * 0.03); ctx.stroke();
+      }
+      // ta / ka
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      for (let k = this.words.length - 1; k >= 0; k--) {
+        const wd = this.words[k], age = t - wd.t;
+        if (age > 0.9) { this.words.splice(k, 1); continue; }
+        const f = age / 0.9, d = R * (1.04 + (reduced ? 0 : f * 0.1));
+        ctx.globalAlpha = 1 - f;
+        ctx.font = `700 ${R * 0.12}px Unbounded, sans-serif`;
+        ctx.fillStyle = C.skin;
+        ctx.fillText(wd.text, Math.cos(wd.a) * d, Math.sin(wd.a) * d);
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  const drum = new Doira(document.getElementById('drum'));
+  const you = new Doira(document.getElementById('you'), { orbit: false });
+  const ai = new Doira(document.getElementById('ai'), { orbit: false });
+
+  // tap the drum: centre = bum, rim = bak
+  drum.c.addEventListener('pointerdown', (e) => {
+    const r = drum.c.getBoundingClientRect();
+    const x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2;
+    const d = Math.hypot(x, y) / drum.R;
+    if (d > 1.05) return;
+    const code = d < 0.68 ? 'B' : (x < 0 ? 't' : 'T');
+    unlock().then(() => sound(code, 0));
+    drum.strike(code, undefined, { x, y });
+  });
+
+  // ---- cycle player ----
+  const play = { on: false, usul: 'toy', next: 0, i: 0, cycleStart: 0, queue: [] };
+  function cycleLen(u) { return (u.gaps ? u.gaps.reduce((a, b) => a + b, 0) : u.seq.length) * u.mean; }
+  function gapAt(u, i, m) { return (u.gaps ? 1 + (u.gaps[i] - 1) * m : 1) * u.mean; }
+  function start() {
+    unlock().then(() => {
+      play.on = true; play.i = 0;
+      play.next = audio.ctx.currentTime + 0.1; play.cycleStart = play.next;
+    });
+  }
+  function schedule() {
+    if (!play.on) return;
+    const u = USULS[play.usul], now = audio.ctx.currentTime;
+    while (play.next < now + 0.12) {
+      const code = u.seq[play.i];
+      sound(code, play.next);
+      play.queue.push({ t: play.next, i: play.i, code });
+      play.next += gapAt(u, play.i, drum.mTarget);
+      play.i = (play.i + 1) % u.seq.length;
+      if (play.i === 0) play.cycleStart = play.next;
+    }
+  }
+  setInterval(schedule, 25);
+
+  // ---- UI ----
+  const songs = document.getElementById('songs'), controls = document.getElementById('controls'), now = document.getElementById('now');
+  songs.querySelector('[data-song]').addEventListener('click', () => {
+    songs.hidden = true; controls.hidden = false;
+    now.innerHTML = '<h1>Despacito</h1><p>Luis Fonsi · in the to\'y usul</p>';
+    start();
+  });
+  document.getElementById('back').addEventListener('click', () => {
+    play.on = false; play.queue.length = 0; drum.phase = -1;
+    songs.hidden = false; controls.hidden = true;
+    now.innerHTML = '<h1>Pick a song</h1><p>or tap the drum</p>';
+  });
+  document.querySelectorAll('.seg').forEach((seg) => seg.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    seg.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    if (b.dataset.feel) drum.mTarget = b.dataset.feel === 'player' ? 1 : 0;
+    if (b.dataset.usul) {
+      play.usul = b.dataset.usul === 'auto' ? 'toy' : b.dataset.usul;
+      drum.usul = USULS[play.usul]; play.i = 0; play.queue.length = 0;
+      if (audio.ctx) { play.next = audio.ctx.currentTime + 0.05; play.cycleStart = play.next; }
+      const u = USULS[play.usul];
+      now.querySelector('p').textContent = `Luis Fonsi · ${b.dataset.usul === 'auto' ? "Auto: to'y" : u.name}`;
+      document.getElementById('sheet-usul').textContent = `${u.name} · ${u.seq.length} strokes`;
+    }
+  }));
+  const sheet = document.getElementById('sheet');
+  document.getElementById('more').addEventListener('click', () => sheet.classList.add('open'));
+  document.getElementById('close').addEventListener('click', () => sheet.classList.remove('open'));
+  document.querySelectorAll('[data-view]').forEach((tab) => tab.addEventListener('click', () => {
+    document.querySelectorAll('[data-view]').forEach((x) => x.setAttribute('aria-selected', String(x === tab)));
+    document.getElementById('view-play').hidden = tab.dataset.view !== 'play';
+    document.getElementById('view-live').hidden = tab.dataset.view !== 'live';
+    if (tab.dataset.view === 'live') { play.on = false; you.fit(); ai.fit(); }
+  }));
+
+  // live screen preview: the two drums trade strokes silently
+  let liveT = 0;
+
+  let last = performance.now() / 1000;
+  function frame() {
+    const t = performance.now() / 1000, dt = Math.min(0.05, t - last); last = t;
+    if (audio.ctx) {
+      const at = audio.ctx.currentTime;
+      while (play.queue.length && play.queue[0].t <= at) { const q = play.queue.shift(); drum.strike(q.code, q.i); }
+      if (play.on) { const u = USULS[play.usul]; drum.phase = Math.min(1, Math.max(0, (at - play.cycleStart + cycleLen(u)) % cycleLen(u) / cycleLen(u))); }
+    }
+    if (!document.getElementById('view-play').hidden) drum.draw(t, dt);
+    else {
+      if (!reduced && t - liveT > 0.6) { liveT = t; (Math.floor(t / 0.6) % 2 ? you : ai).strike(Math.random() < 0.4 ? 'M' : 'K'); }
+      you.draw(t, dt); ai.draw(t, dt);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
