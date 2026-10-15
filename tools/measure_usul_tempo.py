@@ -1,8 +1,15 @@
 """Mean stroke gap of each usul recording, normal and slow tempo.
 
-Uses the same onset detector and decoder as scripts/analyze_phaseB_phrases.py.
-The studio's timing feel runs from the normal tempo (full measured feel) to the
-slow tempo (reduced feel); this script measures where "slow" is.
+The studio's timing feel runs from the normal tempo (full measured feel) to
+the slow tempo (reduced feel); this script measures where "slow" is. The slow
+gaps in doyra-ai-site/studio/js/usuls.js (slow.gap) come from here.
+
+Onsets: librosa onset detection (delta 0.07, wait 3 frames of 256 samples).
+The older detector in scripts/analyze_phaseB_phrases.py misses soft kichik
+baks (to'y normal came out at 340 ms against the paper's 236 ms). With these
+settings the normal recordings reproduce the paper's mean gaps:
+to'y 229 / 236 ms, Usul 4 337 / 334 ms, Usul 5 196 / 195 ms.
+Usul 6 does not reproduce (137 / 192 ms), so its slow value is not used.
 
 Gaps longer than 2.5x the median gap are pauses between phrases and are left out.
 
@@ -15,17 +22,21 @@ import re
 import sys
 from pathlib import Path
 
+import librosa
 import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 sys.path.insert(0, str(REPO_ROOT / "src"))
-from analyze_phaseB_phrases import detect_onsets, load_m4a_mono  # noqa: E402
+from analyze_phaseB_phrases import load_m4a_mono  # noqa: E402
+
+PAPER_NORMAL_MS = {2: 236, 4: 334, 5: 195, 6: 192}
 
 
 def mean_gap(path: Path) -> tuple[float, int]:
-    sig, sr = load_m4a_mono(path)
-    on = np.array(detect_onsets(sig, sr)) / sr
+    y, sr = load_m4a_mono(path)
+    env = librosa.onset.onset_strength(y=y.astype(np.float32), sr=sr, hop_length=256)
+    on = librosa.onset.onset_detect(onset_envelope=env, sr=sr, hop_length=256, units="time", delta=0.07, wait=3)
     g = np.diff(on)
     g = g[g < 2.5 * np.median(g)]
     return float(np.mean(g)), len(on)
@@ -33,20 +44,14 @@ def mean_gap(path: Path) -> tuple[float, int]:
 
 def main() -> None:
     folder = Path(sys.argv[1]) if len(sys.argv) > 1 else REPO_ROOT / "data" / "usul_audio"
-    rows = []
-    for p in sorted(folder.glob("Usul_*_*.m4a")):
-        m = re.match(r"Usul_(\d)_(normal|slow)", p.stem)
-        if not m:
-            continue
-        gap, n = mean_gap(p)
-        rows.append((int(m.group(1)), m.group(2), p.name, gap, n))
-        print(f"{p.name:28s} {n:4d} strokes  mean gap {gap * 1000:6.1f} ms")
-    print()
-    for u in sorted({r[0] for r in rows}):
+    for u in range(1, 7):
         for tempo in ("normal", "slow"):
-            g = [r[3] for r in rows if r[0] == u and r[1] == tempo]
-            if g:
-                print(f"Usul {u} {tempo:6s}: {np.mean(g) * 1000:6.1f} ms (from {len(g)} recording{'s' if len(g) > 1 else ''})")
+            p = folder / f"Usul_{u}_{tempo}.m4a"
+            if not p.exists():
+                continue
+            gap, n = mean_gap(p)
+            paper = f"  (paper: {PAPER_NORMAL_MS[u]} ms)" if tempo == "normal" and u in PAPER_NORMAL_MS else ""
+            print(f"Usul {u} {tempo:6s}: {n:3d} strokes, mean gap {gap * 1000:6.1f} ms{paper}")
 
 
 if __name__ == "__main__":
