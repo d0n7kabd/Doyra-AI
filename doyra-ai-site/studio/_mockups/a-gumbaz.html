@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup A — Gumbaz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Alegreya+Sans:ital,wght@0,400;0,500;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+/* Direction A — GUMBAZ. Daylight under a Samarkand dome: white plaster,
+   turquoise glaze, fired brick. You look UP into the dome; the usul is the
+   ring of tiles around its drum. */
+:root {
+  --plaster: #f5efe4; --plaster-2: #ebe1cf; --brick: #b4532a; --brick-2: #8f3c1b;
+  --glaze: #0f9a9a; --glaze-2: #0b6f78; --cobalt: #1f3fa0; --ink: #2a1a12; --muted: #7b6553;
+  --f-d: "Rozha One", Georgia, serif; --f-b: "Alegreya Sans", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--plaster); color: var(--ink); font-family: var(--f-b); font-size: 17px; overflow-x: clip; }
+.tag { position: fixed; left: 12px; bottom: 12px; z-index: 9; font: 600 11px/1 var(--f-b); letter-spacing: .14em; text-transform: uppercase; background: var(--ink); color: var(--plaster); padding: 6px 9px; border-radius: 3px; }
+
+header { display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-bottom: 2px solid var(--brick); background:
+  repeating-linear-gradient(90deg, var(--brick) 0 22px, var(--brick-2) 22px 24px) top/100% 6px no-repeat, var(--plaster); padding-top: 20px; }
+header h1 { font: 400 24px/1 var(--f-d); margin: 0; margin-right: auto; }
+header nav { display: flex; gap: 6px; }
+header nav a { font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; color: var(--ink); padding: 8px 12px; border-radius: 999px; }
+header nav a.on { background: var(--glaze); color: #fff; }
+
+.stage { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px; padding: 28px 20px 40px; max-width: 1280px; margin: 0 auto; align-items: center; }
+.dome-wrap { position: relative; }
+.dome { width: 100%; height: auto; display: block; filter: drop-shadow(0 30px 40px rgba(143,60,27,.18)); }
+.dome .tile { transition: transform .3s; transform-box: fill-box; transform-origin: center; }
+.dome .tile.lit { animation: glow 1.2s ease-in-out infinite alternate; }
+@keyframes glow { to { filter: brightness(1.35); } }
+.shard { animation: chip 1.6s cubic-bezier(.2,.8,.2,1) infinite; transform-box: fill-box; }
+@keyframes chip { 0% { transform: translate(0,0) rotate(0); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) rotate(80deg); opacity: 0; } }
+.shock { animation: shock 2.4s ease-out infinite; transform-origin: 300px 300px; }
+@keyframes shock { from { transform: scale(.2); opacity: .7; } to { transform: scale(1.05); opacity: 0; } }
+
+.panel h2 { font: 400 clamp(34px, 5vw, 58px)/.95 var(--f-d); margin: 0 0 6px; }
+.panel .by { color: var(--muted); margin: 0 0 22px; font-style: italic; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.chip { border: 2px solid var(--ink); background: transparent; border-radius: 6px 6px 0 0; padding: 10px 12px 8px; font: 800 13px/1 var(--f-b); letter-spacing: .04em; cursor: pointer; }
+.chip small { display: block; font-weight: 400; color: var(--muted); margin-top: 4px; }
+.chip.on { background: var(--glaze); color: #fff; border-color: var(--glaze); }
+.chip.on small { color: #d8f3f1; }
+.row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.seg { display: inline-flex; border: 2px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.seg b { padding: 9px 14px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+.seg b.on { background: var(--ink); color: var(--plaster); }
+.label { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+.fader { position: relative; height: 54px; border-radius: 27px; background: linear-gradient(90deg, var(--cobalt), var(--glaze) 50%, var(--brick)); }
+.fader::after { content: ""; position: absolute; left: 62%; top: 4px; width: 46px; height: 46px; border-radius: 50%; background: var(--plaster); box-shadow: 0 4px 10px rgba(0,0,0,.25), inset 0 0 0 6px var(--brick); }
+.fader-labels { display: flex; justify-content: space-between; font-weight: 800; font-size: 13px; margin-top: 8px; }
+.play { display: inline-flex; align-items: center; gap: 12px; background: var(--brick); color: #fff; border: 0; border-radius: 999px; padding: 16px 26px; font: 800 16px var(--f-b); letter-spacing: .04em; margin-top: 22px; }
+.play::before { content: ""; border-left: 12px solid #fff; border-top: 8px solid transparent; border-bottom: 8px solid transparent; }
+
+.library { background: var(--plaster-2); padding: 40px 20px 60px; border-top: 2px solid var(--brick); }
+.library h3 { font: 400 32px var(--f-d); margin: 0 auto 20px; max-width: 1280px; }
+.arches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 18px; max-width: 1280px; margin: 0 auto; }
+.arch { background: var(--plaster); border-radius: 999px 999px 4px 4px; padding: 26px 14px 16px; text-align: center; border: 2px solid var(--brick-2); position: relative; overflow: hidden; }
+.arch::before { content: ""; position: absolute; inset: 8px 8px auto 8px; height: 70px; border-radius: 999px 999px 0 0; background: repeating-conic-gradient(from 0deg at 50% 100%, var(--glaze) 0 10deg, var(--glaze-2) 10deg 20deg); opacity: .9; }
+.arch b { display: block; position: relative; margin-top: 74px; font: 400 19px/1.1 var(--f-d); }
+.arch span { display: block; color: var(--muted); font-size: 13px; margin-top: 4px; }
+.arch .m { display: flex; gap: 6px; justify-content: center; margin-top: 12px; }
+.arch .m i { font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: .06em; border: 1.5px solid var(--ink); border-radius: 999px; padding: 4px 8px; }
+.arch.empty { border-style: dashed; opacity: .55; }
+.arch.add { background: transparent; border-style: dashed; display: grid; place-content: center; min-height: 220px; }
+.arch.add::before { display: none; }
+.arch.add b { margin: 0; }
+
+.note { max-width: 1280px; margin: 20px auto 0; color: var(--muted); font-size: 14px; }
+@media (max-width: 820px) {
+  .stage { grid-template-columns: minmax(0, 1fr); gap: 10px; padding-top: 12px; }
+  header nav a { padding: 7px 9px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+<span class="tag">Mockup A · Gumbaz</span>
+<header>
+  <h1>Doyra Studio</h1>
+  <nav><a class="on" href="#">Library</a><a href="#">Upload</a><a href="#">Live</a></nav>
+</header>
+
+<section class="stage">
+  <div class="dome-wrap">
+    <svg class="dome" viewBox="0 0 600 600" id="dome" aria-label="The to'y cycle as the tile ring of a dome"></svg>
+  </div>
+  <div class="panel">
+    <p class="label">Now playing</p>
+    <h2>Despacito</h2>
+    <p class="by">Luis Fonsi · in the to'y usul</p>
+    <p class="label">Usul</p>
+    <div class="chips">
+      <button class="chip on">To'y<small>12 strokes</small></button>
+      <button class="chip">Usul 1<small>15</small></button>
+      <button class="chip">Usul 3<small>8</small></button>
+      <button class="chip">Usul 4<small>5</small></button>
+      <button class="chip">Usul 5<small>7</small></button>
+      <button class="chip">Usul 6<small>7</small></button>
+    </div>
+    <div class="row">
+      <span class="label">Feel</span>
+      <span class="seg"><b class="on">Player</b><b>Machine</b></span>
+      <span class="seg"><b class="on">Fit to bar</b><b>Free</b></span>
+    </div>
+    <p class="label">Original ⇄ doira</p>
+    <div class="fader"></div>
+    <div class="fader-labels"><span>Song</span><span>Doira</span></div>
+    <button class="play">Play</button>
+  </div>
+</section>
+
+<section class="library">
+  <h3>Songs, ready to play</h3>
+  <div class="arches">
+    <div class="arch"><b>Despacito</b><span>Luis Fonsi</span><div class="m"><i>Song + doira</i><i>Doira only</i></div></div>
+    <div class="arch empty"><b>Your next song</b><span>add with add_song.py</span></div>
+    <div class="arch empty"><b>Your next song</b><span>add with add_song.py</span></div>
+    <div class="arch add"><b>+ Drop your own song</b><span>processed in your browser</span></div>
+  </div>
+  <p class="note">A bum sends a shockwave through the mosaic; each bak chips glowing shards off its tile. On a phone the dome fills the screen and the controls slide up as a sheet.</p>
+</section>
+
+<script>
+// Draw the dome: concentric rings of tiles; outer ring = the 12 strokes of to'y.
+(() => {
+  const svg = document.getElementById('dome'), C = 300, NS = 'http://www.w3.org/2000/svg';
+  const el = (t, a, p = svg) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
+  const wedge = (r0, r1, a0, a1) => {
+    const p = (r, a) => `${(C + r * Math.cos(a)).toFixed(1)} ${(C + r * Math.sin(a)).toFixed(1)}`;
+    return `M${p(r0, a0)} L${p(r1, a0)} A${r1} ${r1} 0 0 1 ${p(r1, a1)} L${p(r0, a1)} A${r0} ${r0} 0 0 0 ${p(r0, a0)}Z`;
+  };
+  el('circle', { cx: C, cy: C, r: 296, fill: '#8f3c1b' });
+  el('circle', { cx: C, cy: C, r: 284, fill: '#f5efe4' });
+  // brick ribs
+  for (let i = 0; i < 48; i++) {
+    const a = i / 48 * Math.PI * 2;
+    el('path', { d: wedge(240, 282, a + .01, a + Math.PI * 2 / 48 - .01), fill: i % 2 ? '#b4532a' : '#c96a3d' });
+  }
+  // the usul ring: M K K x4 — measured to'y gaps decide the angular width of each tile
+  const usul = 'MKKMKKMKKMKK'.split('');
+  const gaps = [1.151, 0.886, 1.033, 1.092, 0.919, 1.038, 1.006, 0.936, 1.061, 0.938, 0.941, 1.0];
+  const tot = gaps.reduce((a, b) => a + b, 0);
+  let a = -Math.PI / 2 - (gaps[11] / tot) * Math.PI;
+  usul.forEach((s, i) => {
+    const w = gaps[i] / tot * Math.PI * 2;
+    const g = el('g', {});
+    const col = s === 'M' ? '#1f3fa0' : '#0f9a9a';
+    el('path', { d: wedge(178, 236, a + .02, a + w - .02), fill: col, class: 'tile' + (i === 4 ? ' lit' : ''), stroke: '#f5efe4', 'stroke-width': 2 }, g);
+    const mid = a + w / 2;
+    const t = el('text', { x: C + 207 * Math.cos(mid), y: C + 207 * Math.sin(mid) + 7, 'text-anchor': 'middle', fill: '#fff', 'font-family': 'Rozha One', 'font-size': 22 }, g);
+    t.textContent = s === 'M' ? '·' : 'ta';
+    if (i === 4) { // shards chipping off a bak
+      for (let k = 0; k < 6; k++) {
+        const sx = C + 236 * Math.cos(mid), sy = C + 236 * Math.sin(mid);
+        const sh = el('polygon', { points: `${sx},${sy} ${sx + 9},${sy + 3} ${sx + 3},${sy + 10}`, fill: '#7fe0d8', class: 'shard' });
+        sh.style.setProperty('--dx', `${Math.cos(mid + (k - 2.5) * .25) * 70}px`);
+        sh.style.setProperty('--dy', `${Math.sin(mid + (k - 2.5) * .25) * 70}px`);
+        sh.style.animationDelay = `${k * .07}s`;
+      }
+    }
+    a += w;
+  });
+  // inner girih: eight-pointed stars in rings
+  const star = (x, y, R, rot, fill) => {
+    let d = '';
+    for (let i = 0; i < 16; i++) { const r = i % 2 ? R * .765 : R, an = rot + i * Math.PI / 8; d += (i ? 'L' : 'M') + (x + r * Math.cos(an)).toFixed(1) + ' ' + (y + r * Math.sin(an)).toFixed(1); }
+    el('path', { d: d + 'Z', fill, stroke: '#f5efe4', 'stroke-width': 1.5 });
+  };
+  for (let i = 0; i < 16; i++) { const an = i / 16 * Math.PI * 2; star(C + 145 * Math.cos(an), C + 145 * Math.sin(an), 20, an, i % 2 ? '#0b6f78' : '#1f3fa0'); }
+  for (let i = 0; i < 10; i++) { const an = i / 10 * Math.PI * 2; star(C + 98 * Math.cos(an), C + 98 * Math.sin(an), 17, an, '#b4532a'); }
+  el('circle', { cx: C, cy: C, r: 66, fill: '#0f9a9a' });
+  star(C, C, 58, 0, '#f5efe4');
+  el('circle', { cx: C, cy: C, r: 20, fill: '#b4532a' });
+  el('circle', { cx: C, cy: C, r: 280, fill: 'none', stroke: '#1f3fa0', 'stroke-width': 4, class: 'shock' });
+})();
+</script>
+</body>
+</html>

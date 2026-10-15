@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup C — Beads</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Direction C — BEADS. A printed poster that plays: bone paper, black ink, one
+   lacquer red. Every stroke is a bead on a string. The type is alive: its
+   width and weight swell on each stroke (variable font axes). The timing
+   feel is literally visible — the string tightens where the baks crowd. */
+:root {
+  --bone: #f1ece2; --ink: #111014; --red: #e2341d; --grey: #8b867c; --line: rgba(17,16,20,.16);
+  --f-d: "Bricolage Grotesque", sans-serif; --f-m: "IBM Plex Mono", monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bone); color: var(--ink); font-family: var(--f-d); overflow-x: clip; }
+.tag { position: fixed; left: 12px; bottom: 12px; z-index: 9; font: 600 11px/1 var(--f-m); letter-spacing: .1em; text-transform: uppercase; background: var(--ink); color: var(--bone); padding: 6px 9px; }
+
+header { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; padding: 14px 20px; border-bottom: 1.5px solid var(--ink); font-family: var(--f-m); font-size: 13px; }
+header b { font-family: var(--f-d); font-weight: 800; font-size: 18px; letter-spacing: -.02em; }
+header nav { display: flex; gap: 16px; justify-content: center; }
+header nav a { color: var(--ink); text-decoration: none; }
+header nav a.on { color: var(--red); }
+header nav a.on::before { content: "● "; }
+
+/* giant reactive syllables */
+.poster { position: relative; padding: 18px 20px 0; }
+.syl {
+  margin: 0; line-height: .78; letter-spacing: -.05em;
+  font-size: clamp(110px, 29vw, 400px); font-weight: 800;
+  display: flex; gap: .14em; align-items: baseline;
+}
+.syl span { font-variation-settings: "wdth" 75; transition: font-variation-settings .2s; }
+.syl span.hit { color: var(--red); font-variation-settings: "wdth" 100; animation: swell 1.6s ease-in-out infinite alternate; }
+@keyframes swell { from { font-variation-settings: "wdth" 75; font-weight: 500; } to { font-variation-settings: "wdth" 100; font-weight: 800; } }
+.syl .dot { font-weight: 200; color: var(--grey); }
+.meta { display: flex; justify-content: space-between; align-items: end; gap: 18px; flex-wrap: wrap; border-top: 1.5px solid var(--ink); margin-top: 10px; padding-top: 10px; font-family: var(--f-m); font-size: 13px; }
+.meta h1 { font: 800 clamp(28px, 4vw, 48px)/1 var(--f-d); letter-spacing: -.03em; margin: 0; }
+.meta h1 small { display: block; font: 400 13px var(--f-m); color: var(--grey); letter-spacing: 0; margin-top: 6px; }
+
+/* the string */
+.string { padding: 30px 20px 10px; }
+.string svg { width: 100%; height: auto; display: block; overflow: visible; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-family: var(--f-m); font-size: 12px; color: var(--grey); padding: 0 20px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: center; padding: 22px 20px; border-bottom: 1.5px solid var(--ink); font-family: var(--f-m); font-size: 13px; }
+.controls .grp { display: flex; gap: 0; border: 1.5px solid var(--ink); }
+.controls .grp span { padding: 8px 12px; }
+.controls .grp span.on { background: var(--ink); color: var(--bone); }
+.fader { flex: 1 1 220px; display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; }
+.fader .track { height: 2px; background: var(--ink); position: relative; }
+.fader .track::after { content: ""; position: absolute; left: 70%; top: -9px; width: 20px; height: 20px; border-radius: 50%; background: var(--red); }
+.play { font: 800 16px var(--f-d); background: var(--red); color: var(--bone); border: 0; padding: 14px 24px; border-radius: 999px; }
+
+/* library index */
+.index { padding: 26px 20px 50px; }
+.index h2 { font: 800 14px var(--f-m); letter-spacing: .08em; text-transform: uppercase; margin: 0 0 12px; }
+.row { display: grid; grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1.2fr) auto; gap: 14px; align-items: center; padding: 16px 0; border-top: 1px solid var(--line); }
+.row:last-child { border-bottom: 1px solid var(--line); }
+.row .n { font: 400 12px var(--f-m); color: var(--grey); }
+.row .t { font: 700 clamp(22px, 3vw, 34px)/1 var(--f-d); letter-spacing: -.03em; font-variation-settings: "wdth" 85; }
+.row .t small { display: block; font: 400 13px var(--f-m); color: var(--grey); margin-top: 4px; letter-spacing: 0; }
+.row svg { width: 100%; height: 24px; }
+.row .m { font: 400 12px var(--f-m); display: flex; gap: 6px; }
+.row .m span { border: 1px solid var(--ink); padding: 4px 8px; white-space: nowrap; }
+.row.ghost { opacity: .35; }
+
+/* live duet */
+.duet { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: center; padding: 34px 20px; background: var(--ink); color: var(--bone); }
+.duet h3 { font: 800 clamp(28px, 4vw, 52px)/1 var(--f-d); margin: 0; letter-spacing: -.03em; }
+.duet p { font: 400 13px var(--f-m); color: #b8b2a6; margin: 6px 0 0; }
+.duet .ear { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--red); display: grid; place-items: center; font: 600 11px var(--f-m); color: var(--red); animation: listen 1.4s ease-in-out infinite; }
+@keyframes listen { 50% { box-shadow: 0 0 0 14px rgba(226,52,29,.15); } }
+.duet .right { text-align: right; }
+
+@media (max-width: 720px) {
+  header { grid-template-columns: auto 1fr; }
+  header nav { justify-content: end; }
+  header > span:last-child { display: none; }
+  .row { grid-template-columns: 24px minmax(0, 1fr); }
+  .row svg, .row .m { grid-column: 2; }
+  .duet { grid-template-columns: 1fr; text-align: left; }
+  .duet .right { text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+<span class="tag">Mockup C · Beads</span>
+<header>
+  <b>Doyra Studio</b>
+  <nav><a class="on" href="#">Library</a><a href="#">Upload</a><a href="#">Live</a></nav>
+  <span>sound: on</span>
+</header>
+
+<section class="poster" aria-label="Now playing">
+  <p class="syl" aria-hidden="true"><span class="dot">·</span><span>ta</span><span class="hit">ta</span></p>
+  <div class="meta">
+    <h1>Despacito <small>Luis Fonsi · to'y usul · stroke 3 of 12</small></h1>
+    <span>original ⇄ doira</span>
+  </div>
+</section>
+
+<section class="string" aria-label="One to'y cycle as beads on a string">
+  <svg viewBox="0 0 1000 170" id="string"></svg>
+</section>
+<div class="legend">
+  <span><i style="background:#111014"></i>kichik bum (no syllable)</span>
+  <span><i style="background:#e2341d"></i>kichik bak, main hand — ta</span>
+  <span><i style="border:1.5px dashed #8b867c"></i>machine: even spacing</span>
+  <span>— the string pulls tight where the baks crowd</span>
+</div>
+
+<section class="controls">
+  <span class="grp"><span class="on">To'y</span><span>1</span><span>3</span><span>4</span><span>5</span><span>6</span></span>
+  <span class="grp"><span class="on">Player</span><span>Machine</span></span>
+  <span class="grp"><span class="on">Fit to bar</span><span>Free</span></span>
+  <span class="fader"><span>song</span><span class="track"></span><span>doira</span></span>
+  <button class="play">Play ▶</button>
+</section>
+
+<section class="index" aria-label="Library">
+  <h2>Library</h2>
+  <div class="row"><span class="n">01</span><span class="t">Despacito<small>Luis Fonsi</small></span><svg viewBox="0 0 300 24" class="mini"></svg><span class="m"><span>Song + doira</span><span>Doira only</span></span></div>
+  <div class="row ghost"><span class="n">02</span><span class="t">Your next song<small>tools/library/add_song.py</small></span><svg viewBox="0 0 300 24"></svg><span class="m"><span>—</span></span></div>
+  <div class="row ghost"><span class="n">+</span><span class="t">Drop your own file<small>processed in your browser</small></span><svg viewBox="0 0 300 24"></svg><span class="m"><span>upload</span></span></div>
+</section>
+
+<section class="duet" aria-label="Live mode">
+  <div><h3>You</h3><p>mic · tempo follows you</p></div>
+  <div class="ear">listening</div>
+  <div class="right"><h3>The AI</h3><p>answers in the gaps · locked to the cycle</p></div>
+</section>
+
+<script>
+(() => {
+  // One to'y cycle. Bead x-position = cumulative measured gap; ghost beads = even.
+  const gaps = [1.151, 0.886, 1.033, 1.092, 0.919, 1.038, 1.006, 0.936, 1.061, 0.938, 0.941, 1.0];
+  const usul = 'MKKMKKMKKMKK'.split('');
+  const tot = gaps.reduce((a, b) => a + b, 0);
+  const X0 = 40, W = 920;
+  let x = 0, real = [];
+  for (let i = 0; i < 12; i++) { real.push(X0 + x / tot * W); x += gaps[i]; }
+  const even = usul.map((_, i) => X0 + i / 12 * W);
+  let s = '';
+  // the string sags between beads; tighter gap = less sag
+  let d = `M${X0 - 30} 60`;
+  real.forEach((rx, i) => {
+    const prev = i ? real[i - 1] : X0 - 30;
+    const sag = 8 + (i ? gaps[i - 1] : 1) * 26;
+    d += ` Q${(prev + rx) / 2} ${60 + sag} ${rx} 60`;
+  });
+  d += ` Q${(real[11] + X0 + W + 30) / 2} 90 ${X0 + W + 30} 60`;
+  s += `<path d="${d}" fill="none" stroke="#111014" stroke-width="2"/>`;
+  even.forEach((ex) => { s += `<circle cx="${ex}" cy="130" r="9" fill="none" stroke="#8b867c" stroke-width="1.5" stroke-dasharray="3 3"/>`; });
+  real.forEach((rx, i) => {
+    const bum = usul[i] === 'M';
+    const hit = i === 2;
+    s += `<line x1="${rx}" y1="72" x2="${even[i]}" y2="120" stroke="#8b867c" stroke-width="1" opacity=".5"/>`;
+    s += `<circle cx="${rx}" cy="60" r="${bum ? 19 : 14}" fill="${bum ? '#111014' : '#e2341d'}"${hit ? ' stroke="#111014" stroke-width="4"' : ''}/>`;
+    if (!bum) s += `<text x="${rx}" y="65" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="14" fill="#f1ece2">ta</text>`;
+    if (i % 3 === 1) {
+      const ms = Math.round(gaps[i] * 236);
+      s += `<text x="${(rx + real[i + 1]) / 2}" y="22" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" fill="#e2341d">${ms} ms</text>`;
+      s += `<path d="M${rx + 4} 32 h${real[i + 1] - rx - 8}" stroke="#e2341d" stroke-width="1.5"/>`;
+    }
+  });
+  s += `<text x="${X0}" y="164" font-family="IBM Plex Mono" font-size="12" fill="#8b867c">machine</text>`;
+  document.getElementById('string').innerHTML = s;
+
+  // tiny bead-strings in the library rows
+  document.querySelectorAll('.row svg').forEach((m, k) => {
+    let t = '<line x1="0" y1="12" x2="300" y2="12" stroke="#111014" stroke-width="1"/>';
+    real.forEach((rx, i) => { t += `<circle cx="${(rx - X0) / W * 280 + 10}" cy="12" r="${usul[i] === 'M' ? 5 : 3.5}" fill="${usul[i] === 'M' ? '#111014' : '#e2341d'}"/>`; });
+    m.innerHTML = t;
+  });
+})();
+</script>
+</body>
+</html>
