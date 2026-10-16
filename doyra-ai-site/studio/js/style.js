@@ -51,8 +51,21 @@ function similarity(a, b) {
   return best;
 }
 
-// -> { style, confidence (0..1), scores: [{style, similarity, probability}], nearest }
-export function detectStyle(profile, examples, { temperature = 0.03 } = {}) {
+// House: a kick on every beat at a house tempo. Reggaeton also puts a kick on
+// every beat (the dembow "boom"), so the kick alone can't tell them apart; the
+// tempo can: house runs at about 115-130 BPM, reggaeton at about 85-105.
+export const HOUSE_MIN_BPM = 110;
+export const FOUR_ON_FLOOR_MIN = 0.75; // weakest beat's kick vs. the strongest
+
+export function fourOnTheFloor(profile) {
+  const kicks = [0, 4, 8, 12].map((p) => profile[p]);
+  const top = Math.max(...kicks);
+  return top > 0 ? Math.min(...kicks) / top : 0;
+}
+
+// -> { style, confidence (0..1), scores: [{style, similarity, probability}], nearest, rule }
+// bpm (optional) enables the house rule.
+export function detectStyle(profile, examples, { temperature = 0.03, bpm = null } = {}) {
   const best = {};
   let nearest = null;
   for (const ex of examples) {
@@ -63,7 +76,16 @@ export function detectStyle(profile, examples, { temperature = 0.03 } = {}) {
   const styles = Object.keys(best);
   const exps = styles.map((st) => Math.exp((best[st].similarity - nearest.similarity) / temperature));
   const sum = exps.reduce((p, q) => p + q, 0);
-  const scores = styles.map((st, i) => ({ style: st, similarity: best[st].similarity, probability: exps[i] / sum }))
-    .sort((p, q) => q.probability - p.probability);
-  return { style: scores[0].style, confidence: scores[0].probability, scores, nearest };
+  let scores = styles.map((st, i) => ({ style: st, similarity: best[st].similarity, probability: exps[i] / sum }));
+  let rule = null;
+  const even = fourOnTheFloor(profile);
+  if (bpm && bpm >= HOUSE_MIN_BPM && even >= FOUR_ON_FLOOR_MIN && styles.includes('house')) {
+    // the kick's evenness sets the confidence; the other styles share the rest
+    const conf = Math.min(0.99, 0.5 + 0.5 * even);
+    const rest = scores.filter((x) => x.style !== 'house').reduce((p, x) => p + x.probability, 0) || 1;
+    scores = scores.map((x) => ({ ...x, probability: x.style === 'house' ? conf : (x.probability / rest) * (1 - conf) }));
+    rule = `kick on every beat (${Math.round(even * 100)} % even) at ${Math.round(bpm)} BPM`;
+  }
+  scores.sort((p, q) => q.probability - p.probability);
+  return { style: scores[0].style, confidence: scores[0].probability, scores, nearest, rule };
 }

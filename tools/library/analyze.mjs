@@ -34,7 +34,7 @@ const analysis = {
 let style = null;
 const styles = JSON.parse(readFileSync(new URL('../../doyra-ai-site/studio/data/styles.json', import.meta.url), 'utf8'));
 if (analysis.style.bars && styles.examples.length) {
-  const r = detectStyle(analysis.style.profile, styles.examples);
+  const r = detectStyle(analysis.style.profile, styles.examples, { bpm: an.bpm });
   style = { detected: r.style, confidence: Math.round(r.confidence * 100) / 100 };
 }
 writeFileSync(outPath, JSON.stringify({ analysis, style }));

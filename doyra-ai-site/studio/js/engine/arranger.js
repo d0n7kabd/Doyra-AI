@@ -167,10 +167,21 @@ export function findSections(bars) {
 // The song's own drum pattern in one section: 16 steps, each a stroke code or '.'.
 // bands: { low, mid, high } values on the 16th grid (from the mix, or the
 // Demucs drum stem on the laptop).
+// How the transcription decides. Tuned with tools/tune_transcription.mjs against
+// Demucs drum stems of the library songs (see that file for the numbers).
+export const TRANSCRIBE = {
+  hitRel: 0.35,       // a bar's hit: at least this share of the band's 90th percentile
+  salience: { low: 0.55, mid: 0.55, high: 0.55 }, // and this strong vs. the band's strongest position
+  midPeak: 0,         // a snare is a peak: its strength >= this x its neighbours' (16ths either side); 0 = off
+  maxBaks: 16,        // at most this many snare/clap positions per bar (the strongest)
+  snareOverKick: 0.75,// where kick and snare both hit, bak needs this snare salience
+};
+
 // bands.covered (optional): [from, to) ranges of grid indices where the bands
 // exist (Demucs may separate only a few bars per section); other bars use
 // `fallback` (the full mix).
-export function transcribeSection(bars, section, bands, fallback = null) {
+export function transcribeSection(bars, section, bands, fallback = null, params = TRANSCRIBE) {
+  const P = { ...TRANSCRIBE, ...params, salience: { ...TRANSCRIBE.salience, ...(params.salience || {}) } };
   let secBars = bars.slice(section.from, section.to);
   if (bands.covered) {
     const inside = secBars.filter((b) => bands.covered.some(([a, z]) => b.g >= a && b.g + 16 <= z));
@@ -180,7 +191,7 @@ export function transcribeSection(bars, section, bands, fallback = null) {
   const hits = {}, salience = {};
   for (const band of ['low', 'mid', 'high']) {
     const v = secBars.map((b) => Array.from({ length: 16 }, (_, p) => bands[band][b.g + p] || 0));
-    const thr = 0.35 * quantile(v.flat(), 0.9);
+    const thr = P.hitRel * quantile(v.flat(), 0.9);
     const hit = v.map((row) => row.map((x) => thr > 0 && x >= thr));
     // consistency: hit in >= 3 of 4 bars, in at least half of the 4-bar windows
     const count = new Array(16).fill(0);
@@ -193,12 +204,20 @@ export function transcribeSection(bars, section, bands, fallback = null) {
       windows = 1;
       for (let p = 0; p < 16; p++) if (hit.filter((h) => h[p]).length >= 0.75 * hit.length) count[p]++;
     }
-    // strength: a position must be at least 55 % as strong as the band's strongest
-    // one, so bleed from the other drums (hi-hats in the snare band) is left out
+    // strength: a position must be strong enough vs. the band's strongest one,
+    // so bleed from the other drums (hi-hats in the snare band) is left out
     const mean = Array.from({ length: 16 }, (_, p) => v.reduce((acc, row) => acc + row[p], 0) / Math.max(1, v.length));
     const top = Math.max(...mean) || 1;
     salience[band] = mean.map((m) => m / top);
-    hits[band] = count.map((c, p) => c >= windows / 2 && c > 0 && salience[band][p] >= 0.55);
+    hits[band] = count.map((c, p) => c >= windows / 2 && c > 0 && salience[band][p] >= P.salience[band]);
+    if (band === 'mid') {
+      // snares are sharp: stronger than the 16ths either side (guitar and voice are smeared)
+      hits.mid = hits.mid.map((h, p) => h && mean[p] >= P.midPeak * Math.max(mean[(p + 15) % 16], mean[(p + 1) % 16]) - 1e-9);
+      // and few: keep only the strongest maxBaks positions
+      const on = hits.mid.map((h, p) => (h ? p : -1)).filter((p) => p >= 0).sort((x, y) => mean[y] - mean[x]);
+      const keep = new Set(on.slice(0, P.maxBaks));
+      hits.mid = hits.mid.map((h, p) => h && keep.has(p));
+    }
   }
   // one stroke per step: a clear snare/clap -> bak, kick -> bum, hi-hat -> kichik bak
   // (hands alternate: main on the beat side, secondary on the off 16ths)
@@ -206,7 +225,7 @@ export function transcribeSection(bars, section, bands, fallback = null) {
   for (let p = 0; p < 16; p++) {
     let code = '.';
     const snare = hits.mid[p], kick = hits.low[p];
-    if (snare && (!kick || salience.mid[p] >= 0.75)) code = p % 2 ? 't' : 'T';
+    if (snare && (!kick || salience.mid[p] >= P.snareOverKick)) code = p % 2 ? 't' : 'T';
     else if (kick) code = p % 4 === 0 ? 'B' : 'b';
     else if (snare) code = p % 2 ? 't' : 'T';
     else if (hits.high[p]) code = p % 2 ? 'k' : 'K';
@@ -218,7 +237,7 @@ export function transcribeSection(bars, section, bands, fallback = null) {
 // ---------------------------------------------------------------- arrange
 
 export function arrange(an, opts = {}) {
-  const { mode = 'drums', usul = 'toy', fit = true, feel = 'player', style = null, drums16 = null } = opts;
+  const { mode = 'drums', usul = 'toy', fit = true, feel = 'player', style = null, drums16 = null, transcribe = TRANSCRIBE } = opts;
   const rand = rng(opts.seed ?? audioSeed(Float64Array.from(an.beats)));
   const bars = barsOf(an);
   const sections = findSections(bars);
@@ -240,7 +259,7 @@ export function arrange(an, opts = {}) {
     if (mode === 'drums' || mode === 'groove') {
       let steps;
       if (mode === 'drums') {
-        s.transcription = transcribeSection(bars, s, bands, an.band16);
+        s.transcription = transcribeSection(bars, s, bands, an.band16, transcribe);
         steps = s.transcription.steps;
         if (!/[^.]/.test(steps) && style && GROOVES[style]) steps = GROOVES[style].steps; // nothing found: the style's groove
       } else {

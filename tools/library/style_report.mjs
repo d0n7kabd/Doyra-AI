@@ -17,10 +17,10 @@ for (const s of index.songs) {
   const prof = song.analysis.style;
   if (!prof || !prof.bars) { console.log(`${s.title.padEnd(42)} no drum profile`); continue; }
   const label = data.examples.find((e) => e.id === s.id);
-  const r = detectStyle(prof.profile, data.examples.filter((e) => e.id !== s.id));
+  const r = detectStyle(prof.profile, data.examples.filter((e) => e.id !== s.id), { bpm: song.analysis.bpm });
   const scores = r.scores.map((x) => `${name(x.style)} ${Math.round(x.probability * 100)}%`).join(', ');
   let mark = '';
   if (label) { labelled++; if (label.style === r.style) { right++; mark = '  ✓ label: ' + name(label.style); } else mark = '  ✗ label: ' + name(label.style); }
-  console.log(`${s.title.padEnd(42)} ${name(r.style).padEnd(10)} (${scores}; nearest: ${r.nearest.id})${mark}`);
+  console.log(`${s.title.padEnd(42)} ${name(r.style).padEnd(10)} (${scores}; ${r.rule ? 'rule: ' + r.rule : 'nearest: ' + r.nearest.id})${mark}`);
 }
 if (labelled) console.log(`\nlabelled songs detected correctly (leave-one-out): ${right}/${labelled}`);

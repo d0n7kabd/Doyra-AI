@@ -19,7 +19,7 @@ const load = (p) => { const b = readFileSync(p); return new Float32Array(b.buffe
 const x = load(args[0]);
 const an = analyzeSong(x);
 const examples = JSON.parse(readFileSync(new URL('../doyra-ai-site/studio/data/styles.json', import.meta.url), 'utf8')).examples;
-const st = detectStyle(styleProfile(an).profile, examples);
+const st = detectStyle(styleProfile(an).profile, examples, { bpm: an.bpm });
 const seed = audioSeed(x);
 
 const browser = arrange(an, { mode: 'drums', seed, style: st.style });

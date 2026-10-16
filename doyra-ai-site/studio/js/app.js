@@ -284,8 +284,8 @@ async function songStyle(an) {
   const data = await loadStyles();
   const prof = an.style && an.style.profile ? an.style : an.band16 ? styleProfile(an) : null;
   if (!prof || !prof.bars || !data.examples.length) return null;
-  const r = detectStyle(prof.profile, data.examples);
-  return { detected: r.style, confidence: r.confidence, scores: r.scores, override: null };
+  const r = detectStyle(prof.profile, data.examples, { bpm: an.bpm });
+  return { detected: r.style, confidence: r.confidence, scores: r.scores, rule: r.rule, override: null };
 }
 const currentStyle = () => (state.style ? state.style.override || state.style.detected : null);
 const styleName = (id) => (state.styles && state.styles.styles[id] ? state.styles.styles[id].name : id);
@@ -382,7 +382,7 @@ function renderFacts() {
     const pick = `<button data-own-drums aria-pressed="${state.rhythm === 'auto' && !grooveOn}">Song's drums</button>`
       + Object.keys(state.styles.styles).filter((k) => GROOVES[k]).map((k) =>
         `<button data-style-pick="${esc(k)}" aria-pressed="${grooveOn && currentStyle() === k}">${esc(styleName(k))} groove</button>`).join('');
-    html += `<dt>Style</dt><dd>Detected: ${esc(detail)}${st.override ? ` · <button class="link-btn" data-style-pick="">use detected</button>` : ''}
+    html += `<dt>Style</dt><dd>Detected: ${esc(detail)}${st.rule ? ` (${esc(st.rule)})` : ''}${st.override ? ` · <button class="link-btn" data-style-pick="">use detected</button>` : ''}
       <div class="seg small style-pick">${pick}</div></dd>`;
   } else {
     html += '<dt>Style</dt><dd>Not detected (no steady drums found)</dd>';
