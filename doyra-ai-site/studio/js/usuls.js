@@ -29,7 +29,7 @@ export const USULS = {
     slow: { gap: 1.048, keep: 0.05 / 0.14 }, // bak-bak ratio 1.14 at normal tempo, 1.05 slow
   },
   u1: { name: 'Usul 1', seq: 'KMKKtMKtKtMKKtM', gaps: null, meanGap: null },
-  u3: { name: 'Usul 3', seq: 'KKtMKKtM', gaps: null, meanGap: null },
+  u3: { name: 'Usul 3', seq: 'KKtMKKtKKtMKKtM', gaps: null, meanGap: null }, // 15 strokes (confirmed Nov 2026)
   u4: {
     name: 'Usul 4', note: 'a phrase repeats it 3 times, the last phrase 4 times',
     seq: 'MKKMK', gaps: [0.652, 1.27, 0.748, 1.148, 1.274], meanGap: 0.334,

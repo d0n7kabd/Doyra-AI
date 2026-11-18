@@ -635,3 +635,18 @@ canvas.girih-ghost { opacity: .09; z-index: -1; }
   .timing-svg .gap-label { font-size: 38px; }
   .timing-svg .mark text { font-size: 34px; }
 }
+
+/* Level 1: three panels (isolated, phrases, phrases after retraining) */
+.dots-trio { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 760px) { .dots-trio { grid-template-columns: minmax(0, 1fr); } }
+/* Level 2: 119 passages */
+.ticks-119 { grid-template-columns: repeat(60, minmax(0, 1fr)); gap: 2px; }
+.ticks-119 i { height: 14px; }
+/* Level 3: second finding */
+.aside-top { margin: -8px 0 32px; }
+/* Generate */
+.level-gen { background: linear-gradient(var(--ink), var(--lapis-deep) 50%, var(--ink)); }
+.level-gen .level-num { -webkit-text-stroke-color: var(--gold); }
+.ticks-7 { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; max-width: 420px; }
+.ticks-7 i { height: 34px; border-radius: 999px; }
+.gen-cta { margin-top: 34px; }

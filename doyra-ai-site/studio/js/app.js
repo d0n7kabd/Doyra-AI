@@ -10,6 +10,7 @@ import { styleProfile, detectStyle } from './style.js';
 import { Doira } from './doira.js';
 import { detectEngine, processOnServer } from './engine-client.js';
 import { saveSong, listSongs, getSong, hasSong, removeSong } from './mysongs.js';
+import { initGenerateView } from './generate-view.js';
 
 const $ = (id) => document.getElementById(id);
 const PLAYER = 'doniyor';
@@ -52,20 +53,29 @@ async function loadLibrary() {
   let songs = [];
   try { songs = (await (await fetch('library/index.json')).json()).songs || []; } catch (e) { /* upload still works */ }
   const mine = await listSongs();
-  $('songs').innerHTML = mine.map((s) => `
-    <div class="card-wrap"><button class="card" data-mine="${esc(s.id)}">${ICON}<div><b>${esc(s.title)}</b><span class="where">on this device</span></div></button>
-    <button class="remove" data-remove="${esc(s.id)}" aria-label="Remove ${esc(s.title)} from my songs">×</button></div>`).join('')
-    + songs.map((s) => `
-    <button class="card" data-id="${esc(s.id)}">${ICON}<div><b>${esc(s.title)}</b><span>${esc(s.artist || '')}</span></div></button>`).join('') + `
+  // Generate and "Your song" (upload) come first, then the songs kept on this device, then the library.
+  $('songs').innerHTML = `
+    <button class="card gen-card" id="open-gen">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#e0a93b" stroke-width="2" stroke-dasharray="2 4.3" stroke-linecap="round"/><circle cx="20" cy="20" r="11" fill="#e0a93b"/><path d="M17 15.5v9l7.5-4.5z" fill="#0a1430"/></svg>
+      <div><b>Generate</b><span>new doira, no song</span></div>
+    </button>
     <label class="card add">
       <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#f1e4c8" stroke-width="2" stroke-dasharray="4 4"/><path d="M20 13v14M13 20h14" stroke="#f1e4c8" stroke-width="2"/></svg>
       <div><b>Your song</b><span>choose a file</span></div>
       <input type="file" id="upload" accept="audio/*" aria-label="Choose a song file">
-    </label>`;
+    </label>`
+    + mine.map((s) => `
+    <div class="card-wrap"><button class="card" data-mine="${esc(s.id)}">${ICON}<div><b>${esc(s.title)}</b><span class="where">on this device</span></div></button>
+    <button class="remove" data-remove="${esc(s.id)}" aria-label="Remove ${esc(s.title)} from my songs">×</button></div>`).join('')
+    + songs.map((s) => `
+    <button class="card" data-id="${esc(s.id)}">${ICON}<div><b>${esc(s.title)}</b><span>${esc(s.artist || '')}</span></div></button>`).join('');
   $('songs').querySelectorAll('[data-id]').forEach((c) => c.addEventListener('click', () => openLibrarySong(songs.find((x) => x.id === c.dataset.id))));
   $('songs').querySelectorAll('[data-mine]').forEach((c) => c.addEventListener('click', () => openMine(mine.find((x) => x.id === c.dataset.mine))));
   $('songs').querySelectorAll('[data-remove]').forEach((b) => b.addEventListener('click', async () => { await removeSong(b.dataset.remove); loadLibrary(); }));
   $('upload').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) openFile(f); e.target.value = ''; });
+  $('open-gen').addEventListener('click', () => { audioContext(); generate.show(); });
+  // the landing page links to studio/#generate
+  if (location.hash === '#generate' && !generate.open) generate.show();
 }
 
 function esc(s) {
@@ -492,6 +502,30 @@ $('drum').addEventListener('pointerdown', async (e) => {
 
 const sheet = $('sheet');
 function closeSheet() { sheet.classList.remove('open'); }
+
+// ---------------------------------------------------------------- generate
+
+const generate = initGenerateView({
+  drum,
+  onOpen: () => {
+    state.job++;
+    stopSong();
+    closeSheet();
+    state.song = null;
+    $('player').hidden = true;
+    $('songs').hidden = true;
+    note('');
+    syncPP();
+  },
+  onClose: () => {
+    closeSheet();
+    $('songs').hidden = false;
+    $('title').textContent = 'Pick a song';
+    $('subtitle').textContent = 'or tap the drum';
+    applyRhythm();
+  },
+  openSheet: () => { sheet.classList.add('open'); $('close').focus(); },
+});
 $('more').addEventListener('click', () => { renderFacts(); sheet.classList.add('open'); $('close').focus(); });
 $('close').addEventListener('click', closeSheet);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });

@@ -72,6 +72,60 @@
       </div>
     </div>
   </section>
+
+  <section id="gen" hidden aria-label="Generate">
+    <div class="transport">
+      <button class="pp" id="gen-pp" aria-pressed="false" aria-label="Play"></button>
+      <div class="strip" id="gen-strip" aria-hidden="true"></div>
+      <span class="time" id="gen-time">0:00</span>
+    </div>
+    <p class="gen-key">each bar is one cycle, taller = louder · <i class="key-join"></i> a join the AI made</p>
+    <p class="msg" id="gen-msg" hidden></p>
+
+    <div class="controls">
+      <p class="ctl-label">Usul</p>
+      <div class="seg" data-gen="usul" role="group" aria-label="Usul">
+        <button aria-pressed="false" data-v="toy">To'y</button>
+        <button aria-pressed="false" data-v="u1">1</button>
+        <button aria-pressed="false" data-v="u3">3</button>
+        <button aria-pressed="true" data-v="u4">4</button>
+        <button aria-pressed="false" data-v="u5">5</button>
+        <button aria-pressed="false" data-v="u6">6 · rez</button>
+      </div>
+      <p class="ctl-label">Source</p>
+      <div class="seg" data-gen="source" role="group" aria-label="Source">
+        <button aria-pressed="true" data-v="recorded">His playing</button>
+        <button aria-pressed="false" data-v="pattern">Taught pattern</button>
+      </div>
+      <p class="gen-note" id="gen-recorded-note"></p>
+      <div class="gen-pattern" id="gen-pattern-ctl" hidden>
+        <label class="ctl-label" for="gen-tempo">Tempo <span id="gen-tempo-val"></span></label>
+        <input class="range" type="range" id="gen-tempo" min="60" max="140" step="1" value="100">
+        <p class="ctl-label">Feel</p>
+        <div class="seg small" data-gen="feel" role="group" aria-label="Timing feel">
+          <button aria-pressed="true" data-v="player">Player</button>
+          <button aria-pressed="false" data-v="machine">Machine</button>
+        </div>
+      </div>
+      <p class="ctl-label">Energy</p>
+      <div class="seg small" data-gen="energy" role="group" aria-label="Energy">
+        <button aria-pressed="true" data-v="him">Like him</button>
+        <button aria-pressed="false" data-v="calm">Calm</button>
+        <button aria-pressed="false" data-v="build">Build</button>
+        <button aria-pressed="false" data-v="full">Full</button>
+      </div>
+      <p class="ctl-label">Variation</p>
+      <div class="seg small" data-gen="variation" role="group" aria-label="Variation">
+        <button aria-pressed="true" data-v="steady">Steady</button>
+        <button aria-pressed="false" data-v="varied">Varied</button>
+      </div>
+      <div class="row-bottom">
+        <button class="back" id="gen-back">← Songs</button>
+        <button class="keep-btn" id="gen-save">Save 1 minute</button>
+        <button class="more-btn" id="gen-more">How it works</button>
+      </div>
+    </div>
+  </section>
 </main>
 
 <aside class="sheet" id="sheet" aria-label="More about this song">

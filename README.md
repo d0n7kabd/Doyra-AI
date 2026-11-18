@@ -21,22 +21,37 @@ secondary hand) and noxun. Strokes are chanted as **"ta"** (main hand) and
 
 **Level 1: which stroke.** A classifier trained on 197 isolated strokes
 reached 95% on held-out clips (91.7% in cross-validation), but only 48% on
-164 strokes inside real phrases.
+164 strokes inside real phrases. After training on 2,587 strokes from a
+second, longer session (18 takes: six usuls at slow, normal and fast tempo,
+each stroke labeled from the usul's own pattern), it named the exact stroke
+in 86% of strokes inside phrases, tested on usuls it had never heard (bum vs
+bak 94%, hand 89%).
 
 **Level 2: where in the cycle.** A model that ignored the usul cycle kept at
 most 28% of generated cycles intact; a cycle-aware generator kept 100%.
-Identifying the usul from audio worked in 11 of 33 cases.
+Identifying the usul from audio worked in 11 of 33 cases at first, and in
+105 of 119 passages of 20 strokes (88%) with the retrained classifier.
 
 **Level 3: exactly when.** In the to'y rhythm (a wedding usul, played during
 the yor-yor), the two baks in each group are played about 30–40 ms closer
-together than the other strokes, a pattern the player doesn't feel. It
-fades at slow tempos. In a listening test, three trained doira players
-could not tell measured timing from even timing; Doniyor's teacher,
-guessing clip by clip, got 2 of 9.
+together than the other strokes, a pattern the player doesn't feel. Recorded again at
+seven tempos in two sessions, it grows with speed (ratio 0.98 at 73
+strokes/min, 1.06 at 220, 1.27 at 360) and at slow tempos goes even or
+reverses. In Usuls 1 and 3, strokes of the secondary hand come early. In a
+listening test, three trained doira players could not tell measured timing
+from even timing; Doniyor's current doira teacher, guessing clip by clip,
+got 2 of 9.
+
+**Generator.** A generator that puts whole cycles of Doniyor's own free
+playing in a new order fooled his current doira teacher in 2 of 7 blind
+pairs; in the others he heard "poor transitions between variations in the
+rhythm." It now runs live in Doyra Studio (Generate).
 
 This repository contains the Level 1 classifier (`src/doyra_ai`), the
-dataset it was trained on, and the phrase-level drafts and analysis that
-started Level 2 (`phaseB_drafts/`, `scripts/`).
+dataset it was trained on, the phrase-level drafts and analysis that
+started Level 2 (`phaseB_drafts/`, `scripts/`), and the November 2026
+second session (`doyra_v2/`: retrained classifier, usul recognizer, stroke
+labels, analysis and generator scripts; see `doyra_v2/README.md`).
 
 ## Run the classifier
 
@@ -135,6 +150,26 @@ the song's style. Every drum sound is one of the recorded strokes.
   recorded tempo, fading toward the slow recordings' amounts); Machine is even.
 - **More**: tempo, the usul and its feel, the detected style with confidence
   (and a choice that overrides it), downloads.
+- **Generate** (first card): new doira playing with no song, for as long as
+  you listen. See below.
+
+### Generate
+
+`studio/js/generate.js` (engine) and `studio/js/generate-view.js` (screen).
+Opens from the first card, or at `studio/index.html#generate`.
+
+- **His playing**: whole cycles cut from Doniyor's free takes
+  (`studio/generate/*.m4a` + `generate.json`), re-ordered live. A new join is
+  allowed where the beat types on both sides match a join he played, and the
+  loudness and tempo across it are close. Nothing inside a cycle is changed.
+- **Taught pattern**: the taught usul cycle (`usuls.js`) with the measured
+  feel and a free tempo, played with strokes cut from his taught recordings;
+  each stroke is stopped by the next one, as a hand would.
+- **Energy** (like him, calm, build, full) and **Variation** (steady, varied:
+  grace strokes and a rez roll into every 8th cycle in the pattern).
+- **Save this take** renders exactly what was heard (up to 5 min) as WAV.
+- To'y, Usuls 1, 3, 4, 5 and 6 (rez). Usuls 1 and 5 were not in the blind
+  test. Rebuild the assets with `doyra_v2/generator/build_studio_assets.py`.
 
 ### Your own songs
 
@@ -221,6 +256,9 @@ doyra-ai-site/           the website (GitHub Pages)
   sounds/                one real recording per stroke, copied from data/clips
   studio/                Doyra Studio: index.html, js/ (engine, usuls, patterns,
                          style), sounds/players/ (stroke banks), library/, data/
+                         generate/ (Generate mode: free-take cycles + stroke takes)
+doyra_v2/                second session: retrained classifier, recognize.py, labels,
+                         analysis/ and generator/ scripts
 tools/                   stroke bank, library (add_song.py), style labels, engine tests
 PROJECT_BRIEF.md         original brief for the Level 1 classifier
 ```

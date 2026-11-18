@@ -824,17 +824,17 @@
   // ---------- data visuals ----------
   function buildDots() {
     // Shown per 100 strokes, so the two panels compare like with like.
-    [['#dots-isolated', 0.95, 11], ['#dots-phrase', 0.48, 29]].forEach(([sel, rate, seed]) => {
+    [['#dots-isolated', 0.95, 11], ['#dots-phrase', 0.48, 29], ['#dots-phrase2', 0.86, 41]].forEach(([sel, rate, seed]) => {
       const box = $(sel);
       if (!box) return;
       const rnd = seeded(seed);
       const n = 100, hits = Math.round(rate * n);
       const order = Array.from({ length: n }, (_, i) => i).sort(() => rnd() - 0.5);
       const miss = new Set(order.slice(hits));
-      const phrase = sel === '#dots-phrase';
+      const phrase = sel === '#dots-phrase', inPhrase = sel !== '#dots-isolated';
       box.innerHTML = Array.from({ length: n }, (_, i) => {
         const jit = phrase ? `--jx:${((rnd() - 0.5) * 6).toFixed(1)}px;--jy:${((rnd() - 0.5) * 6).toFixed(1)}px;` : '';
-        const cls = miss.has(i) ? (phrase ? 'miss' : 'wrong') : '';
+        const cls = miss.has(i) ? (inPhrase ? 'miss' : 'wrong') : '';
         return `<i class="${cls}" style="--i:${i};${jit}"></i>`;
       }).join('');
       box.style.gridTemplateColumns = 'repeat(10, minmax(0, 1fr))';

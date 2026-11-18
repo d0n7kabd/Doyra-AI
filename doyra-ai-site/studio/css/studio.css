@@ -135,3 +135,25 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .card-wrap .remove { position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; font: 500 14px var(--f-d); opacity: .5; }
 .card-wrap .remove:hover { opacity: 1; color: var(--gold); }
 .card .where { display: block; font-style: italic; font-size: 13px; opacity: .55; margin-top: 2px; }
+
+/* Generate */
+.card.gen-card { border-color: var(--gold); }
+.card.gen-card span { color: var(--gold); opacity: 1; font-style: italic; }
+.strip { flex: 1; height: 40px; display: flex; align-items: flex-end; gap: 3px; overflow: hidden; border-bottom: 2px solid var(--line); padding-bottom: 2px; }
+.strip i { flex: 0 0 9px; background: var(--skin); opacity: .28; border-radius: 2px 2px 0 0; position: relative; transition: height .3s; }
+.strip i.now { background: var(--gold); opacity: 1; }
+.strip i.join::before, .gen-key .key-join { content: ""; position: absolute; left: 50%; top: -7px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--gold); }
+.gen-key { text-align: center; font-size: 14px; font-style: italic; opacity: .55; margin: -16px 0 22px; }
+.gen-key .key-join { position: relative; display: inline-block; top: -2px; left: 0; margin: 0 2px 0 0; }
+.gen-note { font-size: 15px; font-style: italic; opacity: .6; text-align: center; max-width: 40ch; margin: -6px 0 0; }
+.gen-pattern { display: grid; gap: 18px; justify-items: center; width: 100%; }
+.gen-pattern .ctl-label { margin-bottom: -10px; }
+.range { -webkit-appearance: none; appearance: none; width: min(100%, 340px); height: 28px; background: transparent; cursor: pointer; }
+.range::-webkit-slider-runnable-track { height: 2px; background: var(--line); border-radius: 1px; }
+.range::-moz-range-track { height: 2px; background: var(--line); border-radius: 1px; }
+.range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--gold); margin-top: -9px; border: 0; }
+.range::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--gold); border: 0; }
+#gen .row-bottom { flex-wrap: wrap; justify-content: center; }
+#gen .keep-btn { margin: 0; }
+#gen .keep-btn:disabled { opacity: .5; cursor: default; }
+@media (max-width: 560px) { .strip i { flex-basis: 7px; } }

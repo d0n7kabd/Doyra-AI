@@ -25,6 +25,7 @@
     <a href="#drum">The drum</a>
     <a href="#level-1">Levels</a>
     <a href="#listen">Listen</a>
+    <a href="#generate">Generate</a>
   </nav>
   <a class="btn btn-gold btn-sm" href="studio/index.html">Play with the AI</a>
 </header>
@@ -136,9 +137,9 @@
     <div class="level-body">
       <p class="eyebrow">Level 1</p>
       <h2 id="l1-title" class="h2">Which stroke</h2>
-      <p class="lede">A classifier trained on 197 isolated strokes reached <b class="hl">95%</b> on held-out clips (91.7% in cross-validation), but only <b class="hl hl-clay">48%</b> on 164 strokes inside real phrases.</p>
+      <p class="lede">A classifier trained on 197 isolated strokes reached <b class="hl">95%</b> on held-out clips (91.7% in cross-validation), but only <b class="hl hl-clay">48%</b> on 164 strokes inside real phrases. Trained on 2,587 strokes from phrases, it named <b class="hl">86%</b>, tested on usuls it had never heard.</p>
 
-      <div class="dots-duo" data-reveal>
+      <div class="dots-duo dots-trio" data-reveal>
         <figure class="dots-panel">
           <div class="dots" id="dots-isolated"></div>
           <figcaption><span class="big">95%</span> on held-out isolated strokes <small>shown per 100 clips</small></figcaption>
@@ -147,8 +148,12 @@
           <div class="dots dots-phrase" id="dots-phrase"></div>
           <figcaption><span class="big clay">48%</span> on strokes inside real phrases <small>shown per 100 strokes</small></figcaption>
         </figure>
+        <figure class="dots-panel">
+          <div class="dots dots-phrase2" id="dots-phrase2"></div>
+          <figcaption><span class="big">86%</span> inside phrases, after training on phrases <small>2,520 strokes, each usul held out</small></figcaption>
+        </figure>
       </div>
-      <p class="aside">Alone, a stroke was easy to name. Inside a phrase, the same model needed something more.</p>
+      <p class="aside">Alone, a stroke was easy to name. Inside a phrase, the model had to learn from phrases, and every one of its 2,587 training strokes was labeled from the usul's own pattern.</p>
     </div>
   </section>
 
@@ -186,9 +191,14 @@
             <p class="stat-value"><span class="turq">100%</span> of cycles intact</p>
           </div>
           <div class="stat">
-            <p class="stat-label">Naming the usul from audio</p>
+            <p class="stat-label">Naming the usul from audio, first try</p>
             <div class="ticks ticks-33" data-total="33" data-lit="11" data-tone="gold"></div>
             <p class="stat-value"><span class="gold">11 of 33</span> cases identified</p>
+          </div>
+          <div class="stat">
+            <p class="stat-label">After retraining, 20-stroke passages</p>
+            <div class="ticks ticks-119" data-total="119" data-lit="105" data-tone="gold"></div>
+            <p class="stat-value"><span class="gold">105 of 119</span> passages identified (88%)</p>
           </div>
         </div>
       </div>
@@ -210,7 +220,8 @@
     <div class="level-body">
       <p class="eyebrow">Level 3</p>
       <h2 id="l3-title" class="h2">Exactly when</h2>
-      <p class="lede">In the to'y rhythm (a wedding usul, played during the yor-yor), the two baks in each group are played about <b class="hl">30–40&nbsp;ms</b> closer together than the other strokes. The player doesn't feel it. It fades at slow tempos.</p>
+      <p class="lede">In the to'y rhythm (a wedding usul, played during the yor-yor), the two baks in each group are played about <b class="hl">30–40&nbsp;ms</b> closer together than the other strokes. The player doesn't feel it. It grows with speed: recorded again at seven tempos in two sessions, it was strongest when fast, and at slow tempos it went even or reversed.</p>
+      <p class="aside aside-top">It is not only the to'y. In Usuls 1 and 3, strokes of the secondary hand came early, pulled toward the stroke before them, like the "ta-ka" pair players recite.</p>
 
       <div class="timing" id="timing">
         <div class="timing-controls">
@@ -234,7 +245,7 @@
       <div>
         <p class="eyebrow eyebrow-dark">Listening test</p>
         <h2 id="listen-title" class="h2">Nobody hears it</h2>
-        <p class="lede">Three trained doira players could not tell measured timing from even timing. My teacher, guessing clip by clip, got <b>2 of 9</b>.</p>
+        <p class="lede">Three trained doira players could not tell measured timing from even timing. My current doira teacher, guessing clip by clip, got <b>2 of 9</b>.</p>
         <div class="nine" aria-label="2 of 9 correct">
           <span class="on"></span><span></span><span></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span>
         </div>
@@ -250,6 +261,25 @@
         </div>
         <p class="game-score" id="game-score" aria-live="polite"></p>
       </div>
+    </div>
+  </section>
+
+  <!-- ============================== GENERATE ============================== -->
+  <section class="level level-gen" id="generate" data-scroll aria-labelledby="gen-title">
+    <div class="level-num" aria-hidden="true">+</div>
+    <div class="level-body">
+      <p class="eyebrow">New · November 2026</p>
+      <h2 id="gen-title" class="h2">It plays on its own</h2>
+      <p class="lede">The generator cuts whole cycles from my free playing and puts them in a new order, live, for as long as you listen. Every stroke and pause is mine. Only the joins are new.</p>
+      <div class="cycle-stats" data-reveal>
+        <div class="stat">
+          <p class="stat-label">Blind test, my current doira teacher, 7 pairs of clips</p>
+          <div class="ticks ticks-7" data-total="7" data-lit="2" data-tone="turq"></div>
+          <p class="stat-value"><span class="turq">2 of 7</span> pairs he could not tell from my real playing</p>
+        </div>
+      </div>
+      <p class="aside">In the other pairs he heard what gave it away: "poor transitions between variations in the rhythm." How a player moves from one variation to the next is one more thing he knows without being told. The joins now also have to match in loudness and tempo; that version has not been tested yet.</p>
+      <a class="btn btn-gold gen-cta" href="studio/index.html#generate">Generate in the studio <span aria-hidden="true">→</span></a>
     </div>
   </section>
 
