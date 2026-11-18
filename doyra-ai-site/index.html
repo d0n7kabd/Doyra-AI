@@ -26,6 +26,7 @@
     <a href="#level-1">Levels</a>
     <a href="#listen">Listen</a>
     <a href="#generate">Generate</a>
+    <a href="#paper">Paper</a>
   </nav>
   <a class="btn btn-gold btn-sm" href="studio/index.html">Play with the AI</a>
 </header>
@@ -294,6 +295,51 @@
     </div>
   </section>
 
+  <!-- ============================== THE PAPER ============================== -->
+  <section class="read paper" id="paper" aria-labelledby="paper-title">
+    <div class="read-inner">
+      <div class="read-head">
+        <div class="read-copy">
+          <p class="eyebrow eyebrow-dark">The paper · November 2026</p>
+          <h2 id="paper-title" class="h2">Read it here</h2>
+          <p class="lede"><cite>Teaching a Machine the Doira</cite>: what it takes to represent a drumming tradition computationally, and what is lost at each level.</p>
+          <p class="read-byline">Doniyorbek Abdusalimov · Sodiq School, Tashkent</p>
+        </div>
+        <ul class="read-facts" aria-label="The paper in numbers">
+          <li><b>29</b><span>pages</span></li>
+          <li><b>7</b><span>figures</span></li>
+          <li><b>6</b><span>usuls</span></li>
+          <li><b>2,784</b><span>strokes recorded</span></li>
+        </ul>
+      </div>
+
+      <div class="reader" id="reader" data-src="paper/Teaching_a_Machine_the_Doira.pdf">
+        <div class="reader-bar">
+          <span class="reader-title"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#star8"/></svg>Teaching a Machine the Doira</span>
+          <span class="reader-count" aria-live="polite">Page <b data-r-page>1</b> of <b data-r-total>29</b></span>
+          <div class="reader-tools">
+            <button type="button" data-r="prev" aria-label="Previous page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+            <button type="button" data-r="next" aria-label="Next page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+            <span class="reader-sep" aria-hidden="true"></span>
+            <button type="button" data-r="out" aria-label="Zoom out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+            <span class="reader-zoom" data-r-zoom>100%</span>
+            <button type="button" data-r="in" aria-label="Zoom in"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button>
+            <span class="reader-sep" aria-hidden="true"></span>
+            <button type="button" data-r="full" aria-label="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+            <a class="reader-dl" href="paper/Teaching_a_Machine_the_Doira.pdf" download>Download PDF</a>
+          </div>
+        </div>
+        <div class="reader-scroll" tabindex="0" aria-label="Paper pages">
+          <div class="reader-pages">
+            <div class="reader-wait"><span class="reader-spin" aria-hidden="true"></span>Opening the paper…</div>
+            <noscript><p class="reader-noscript"><a href="paper/Teaching_a_Machine_the_Doira.pdf">Open the paper (PDF)</a></p></noscript>
+          </div>
+        </div>
+        <div class="reader-progress" aria-hidden="true"><i></i></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============================== END ============================== -->
   <section class="finale" aria-labelledby="finale-title">
     <svg class="finale-star" viewBox="0 0 32 32" aria-hidden="true"><use href="#star8"/></svg>
@@ -302,7 +348,7 @@
 
     <div class="credit">
       <p>Made by <b>Doniyor Abdusalimov</b>, doira player from Samarkand, Uzbekistan.</p>
-      <p>Code and data behind the paper <cite>Teaching a Machine the Doira</cite> (2026).</p>
+      <p>Code and data behind the paper <a class="link" href="#paper"><cite>Teaching a Machine the Doira</cite></a> (2026).</p>
       <p><a class="link" href="https://github.com/d0n7kabd/Doyra-AI">Source on GitHub ↗</a></p>
     </div>
   </section>
@@ -327,5 +373,6 @@
 </svg>
 
 <script src="script.js"></script>
+<script src="paper.js" defer></script>
 </body>
 </html>

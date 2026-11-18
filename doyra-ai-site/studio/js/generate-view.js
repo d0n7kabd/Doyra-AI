@@ -163,7 +163,7 @@ export function initGenerateView({ drum, onOpen, onClose, openSheet }) {
       rows.push(['Source', `His playing: ${d ? d.cycles.length : '…'} whole cycles of ${d ? d.per : '…'} beats cut from his free take${d ? ` (${d.minutes.toFixed(1)} min)` : ''}. Nothing inside a cycle is changed.`]);
       rows.push(['How the next cycle is chosen', 'While one cycle plays, the next is picked by cost: a join only where the beat types on both sides match a join he played, close in loudness and in tempo across the join, near the loudness the energy asks for, and not one of the last six cycles. Steady prefers his own next cycle; Varied prefers a new one. The cycles meet with a 30 ms crossfade.']);
       rows.push(['Tested', BLIND_TESTED.has(o.usul)
-        ? 'In the blind test (Nov 2026) his teacher picked the real take in most pairs, and the joins between cycles gave it away. Since then a join must also match loudness and tempo; that version has not been re-tested.'
+        ? 'In the blind test (Nov 2026) his current doira teacher picked the real take in most pairs, and the joins between cycles gave it away. Since then a join must also match loudness and tempo; that version has not been re-tested.'
         : 'This usul was not in the blind test.']);
     } else {
       rows.push(['Source', 'The taught cycle, played with strokes cut from his taught recordings (kichik bum, kichik bak, bak). Each stroke is stopped 12 ms after the next one starts, as a hand would.']);

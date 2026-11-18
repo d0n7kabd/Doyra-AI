@@ -596,7 +596,7 @@
       // bum shockwaves rise from the floor
       this.waves = this.waves.filter((q) => t - q.t < 1.4);
       for (const q of this.waves) {
-        const f = (t - q.t) / 1.4;
+        const f = Math.max(0, (t - q.t) / 1.4); // a wave stamped a moment ahead of this frame's clock
         ctx.strokeStyle = `rgba(224,169,59,${(1 - f) * 0.5})`;
         ctx.lineWidth = 2 + (1 - f) * 6;
         ctx.beginPath(); ctx.ellipse(w / 2, h + 20, f * w * 0.7, f * h * 0.45, 0, Math.PI, TAU); ctx.stroke();
